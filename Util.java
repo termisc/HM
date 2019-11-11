@@ -1,6 +1,8 @@
 package hashContextTest;
 import java.io.FileNotFoundException;
 import java.util.regex.Pattern;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -58,6 +60,227 @@ public class Util {
 		return couple;
 	}
 
+
+
+	void saveAgents(ArrayList<Agent> agents, String filename) {
+		//よくつかうんので
+		try {
+			ObjectOutputStream objOutStream = 
+					new ObjectOutputStream(
+							new FileOutputStream(filename));
+			objOutStream.writeObject(agents);
+			objOutStream.close();
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+		System.out.println("エージェント保存しましま");
+
+	}
+	
+	
+	void save(ArrayList<Agent> agents, String s) {
+		//よくつかうんので
+		String[] args = s.split(" ");
+		args = Arrays.copyOfRange(args, 1, args.length);
+		Pattern pattern_opt = Pattern.compile("-.*");
+		for (String arg :args) {
+			Matcher matcher_opt = pattern_opt.matcher(arg);
+			if (matcher_opt.matches() ) {
+				
+				switch (arg) {
+				case "-a" :
+					System.out.println("えーじぇんと");
+					System.out.println("save agents");
+					LocalDateTime d = LocalDateTime.now();
+					DateTimeFormatter df1 = DateTimeFormatter.ofPattern("MMddHHmss");
+					String ds = df1.format(d); 
+					ds = ds + ".bin";
+					System.out.println(ds);
+					saveAgents(agents,ds);
+					saveAgents(agents,"hoge.bin");			
+					break;
+					
+				case "-c" :
+					ArrayList<Context> contexts = new ArrayList<Context>();
+					for(int i=0 ; i< 256 ;i++) {
+						contexts.add(new Context(i));
+					}
+					
+					for(Agent a : agents ) {
+						for(Context co : a.getContexts()) {
+							System.out.println(co.getAttribute());
+						}
+					}
+					
+					//contexts[2].showHashes();
+					System.out.println("こんてくすと");
+					System.out.println("save contexts");
+					//attrの数だけcontect(save)を作成
+					//agentのcontestを読む
+					//add context from agents to context(save) what has same attr.
+					break;
+				}
+				System.out.println("OK");
+			}else {
+				System.out.println("error");
+			}
+
+		}
+		
+
+		
+		
+	}
+	
+
+	void Commands(String s, ArrayList<Agent> agents) {
+
+		String[] args = s.split(" ");
+
+		//System.out.println("cmd：" + args[0]);
+		switch (args[0]) {
+		case "dump" :
+			System.out.println("dump");
+			break;
+		case "save" :
+			System.out.println("save");
+			//saveAgents(agents,"hoge.bin");
+			save(agents,s);
+			break;	
+		case "meet" :
+			session(s,agents);
+			break;
+		case "context" :
+			System.out.println("✨");
+			showContexts(s,agents);
+			break;
+		case "train" :
+			System.out.println("💪");
+			train(s,agents);
+			break;
+		case "exit" :
+			System.out.println("Have a nice day.");
+			System.exit(0); //ほんとはここに書かず、引数で判断して呼び出し側で閉じるものだよ
+			break;
+
+		}
+	}
+
+	void showContexts(String s, ArrayList<Agent> agents) {
+		String[] args = s.split(" "); 
+		args = Arrays.copyOfRange(args, 1, args.length);
+		int agent = -1;
+		Pattern pattern_obj = Pattern.compile("[0-9]+");
+		Pattern pattern_opt = Pattern.compile("-.*");
+		for (String arg :args) {
+			Matcher matcher_obj = pattern_obj.matcher(arg);
+			if (matcher_obj.matches() ) {
+				agent = Integer.parseInt(arg);
+				agents.get(agent).showHashes();
+				System.out.println("OK");
+			}else {
+				System.out.println("error");
+			}	
+			Matcher matcher_opt = pattern_opt.matcher(arg);
+			if (matcher_opt.matches() ) {
+				
+				switch (arg) {
+				case "-a" :
+					System.out.println("らんだむ");
+					for ( Agent a : agents) {
+						System.out.println("★★★★★"+a.getName());
+						a.showHashes();
+					}
+					break;
+				}
+				System.out.println("OK");
+			}else {
+				System.out.println("error");
+			}
+		}
+	}
+		
+	
+	void train (String s,ArrayList<Agent> agents) {
+		String[] args = s.split(" "); //冗長だがこれでいいのだ
+		Pattern pattern_obj = Pattern.compile("[0-9]+");
+		for (String arg :args) {
+			Matcher matcher_obj = pattern_obj.matcher(arg);
+			if (matcher_obj.matches() ) {
+				int goal = Integer.parseInt(arg);
+				for(int i = 0 ; i < goal ; i++) {
+					int[] couple = ramdomMatch(25);
+					exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]));
+				}
+				int[] couple = ramdomMatch(25);
+				exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]));
+				System.out.println("OK");
+			}else {
+				System.out.println("Error");
+			}
+		}
+		
+	}
+	
+	void session (String s, ArrayList<Agent> agents) {
+		// どうにかして、対象1、対象2、オプション、を分けます
+		//sex [options] object object . optionがあとにくることはないということにする
+		String[] args = s.split(" "); //冗長だがこれでいいのだ
+		args = Arrays.copyOfRange(args, 1, args.length); //sexだけ消しました
+		int agent1 = -1;
+		int agent2 = -1;
+		Pattern pattern_obj = Pattern.compile("[0-9]+");
+		Pattern pattern_opt = Pattern.compile("-.*");
+		Boolean obj1_flag = false; //これが入ったあとでオプションがきたらエラー
+		Boolean obj2_flag = false; //これが入ったあとは何がきてもエラー
+		Boolean opt_flag = false; //これが入ったあとで
+		Boolean error_flag = false; 
+		for (String arg :args) {
+			Matcher matcher_obj = pattern_obj.matcher(arg);
+			if (matcher_obj.matches() ) {
+				if (obj2_flag == true ) {
+					error_flag = true;
+					System.out.println("error");
+				}else if ( obj1_flag == true ){
+					agent2 = Integer.parseInt(arg);
+					obj2_flag = true;
+				}else {
+					agent1 = Integer.parseInt(arg);
+					obj1_flag = true;
+				}
+			}
+			Matcher matcher_opt = pattern_opt.matcher(arg);
+			if (matcher_opt.matches() ) {
+				if(obj1_flag == true) {
+				  error_flag = true; 
+				  continue;
+				}			
+				switch (arg) {
+				case "-r" :
+					System.out.println("らんだむ");
+					int[] couple = ramdomMatch(25);//25は、どっかに定数あったのでそこから参照する
+					agent1 = couple[0];
+					agent2 = couple[1];
+					obj1_flag = true;
+					obj2_flag = true;
+					break;
+				}
+			}
+		}
+		if(error_flag == false && obj2_flag == true) {
+		  exchengeEachOther(agents.get(agent1),agents.get(agent2));
+		}		
+	}
+
+
+	
 	void hashTest() {
 
 		HashMap<String,ArrayList<ArticleLog>> kingmap = new HashMap<String,ArrayList<ArticleLog>>();
@@ -91,136 +314,6 @@ public class Util {
 		//すべてJsonだときびしい
 		//必要に応じてJSONからMassage Packに乗り換えられるとよいだろう　エスケープが煩雑。
 	}
-
-	void saveAgents(ArrayList<Agent> agents, String filename) {
-		//よくつかうんので
-		try {
-			ObjectOutputStream objOutStream = 
-					new ObjectOutputStream(
-							new FileOutputStream(filename));
-			objOutStream.writeObject(agents);
-			objOutStream.close();
-
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-
-		System.out.println("エージェント保存しましま");
-
-	}
-
-	void Commands(String s, ArrayList<Agent> agents) {
-
-		String[] args = s.split(" ");
-
-		System.out.println("cmd：" + args[0]);
-		switch (args[0]) {
-		case "dump" :
-			System.out.println("dump");
-			break;
-		case "save" :
-			System.out.println("save");
-			saveAgents(agents,"hoge.bin");
-			break;
-		
-		case "moon" :
-			System.out.println("😄");
-			break;
-		case "merculy" :
-			System.out.println("💪😄🎤 mama~~");
-			break;
-		case "sex" :
-			System.out.println("💓");
-			session(s,agents);
-			break;
-		case "show" :
-			System.out.println("✨");
-			showHashes(s,agents);
-			break;
-		case "exit" :
-			System.out.println("Have a nice day.");
-			System.exit(0); //ほんとはここに書かず、引数で判断して呼び出し側で閉じるものだよ
-			break;
-
-		}
-	}
-
-	void showHashes(String s, ArrayList<Agent> agents) {
-		//最初の引数(int)のみを読みます。
-		//hash object
-		String[] args = s.split(" "); //冗長だがこれでいいのだ
-		args = Arrays.copyOfRange(args, 1, args.length);
-		int agent = -1;
-		Pattern pattern_obj = Pattern.compile("[0-9]+");
-		for (String arg :args) {
-			Matcher matcher_obj = pattern_obj.matcher(arg);
-			if (matcher_obj.matches() ) {
-				agent = Integer.parseInt(arg);
-				agents.get(agent).showArticle();
-				
-				System.out.println("OK");
-			}else
-				System.out.println("error");
-			}
-	}
-		
 	
-	void session (String s, ArrayList<Agent> agents) {
-		// どうにかして、対象1、対象2、オプション、を分けます
-		//sex [options] object object . optionがあとにくることはないということにする
-		String[] args = s.split(" "); //冗長だがこれでいいのだ
-		args = Arrays.copyOfRange(args, 1, args.length); //sexだけ消しました
-		int agent1 = -1;
-		int agent2 = -1;
-		Pattern pattern_obj = Pattern.compile("[0-9]+");
-		Pattern pattern_opt = Pattern.compile("-.*");
-		Boolean obj1_flag = false; //これが入ったあとでオプションがきたらエラー
-		Boolean obj2_flag = false; //これが入ったあとは何がきてもエラー
-		Boolean opt_flag = false; //これが入ったあとで
-		Boolean error_flag = false; 
-		for (String arg :args) {
-			Matcher matcher_obj = pattern_obj.matcher(arg);
-			if (matcher_obj.matches() ) {
-				if (obj2_flag == true ) {
-					error_flag = true;
-					System.out.println("error");
-				}else if ( obj1_flag == true ){
-					agent2 = Integer.parseInt(arg);
-					obj2_flag = true;
-				}else {
-					agent1 = Integer.parseInt(arg);
-					obj1_flag = true;
-				}
-			}
-			Matcher matcher_opt = pattern_opt.matcher(arg);
-			if (matcher_opt.matches() ) {
-				if(obj1_flag == true) {
-				  //System.out.println("errorあとのどうさはスキップ");
-				  error_flag = true; 
-				  continue;
-				}			
-				switch (arg) {
-				case "-r" :
-					System.out.println("らんだむ");
-					int[] couple = ramdomMatch(25);
-					agent1 = couple[0];
-					agent2 = couple[1];
-					obj1_flag = true;
-					obj2_flag = true;
-					break;
-				}
-			}
-		}
-		if(error_flag == false && obj2_flag == true) {
-		  exchengeEachOther(agents.get(agent1),agents.get(agent2));
-		}		
-	}
-
-
 
 }

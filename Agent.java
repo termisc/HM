@@ -152,6 +152,19 @@ public class Agent implements Serializable{
 		System.out.print("},\n");
 	}
 	
+	void showHashes(){
+		//余裕があればjson形式で吐く いまではない
+		System.out.print("\"attr\" : {");
+		System.out.println("■□□□■□□□■□□□■□□□■□□□■□□□" );
+		for(Context c : contexts) {
+			//System.out.print( c.showHashes() + ", ");
+			System.out.print( c.getAttribute() + ", ");
+			System.out.println("□□□□□□□□" );
+			c.showHashes();
+		}
+		System.out.print("},\n");
+	}
+	
 	
 
 	//機能検証用、articleListから最新記事をもってくるだけ
@@ -274,10 +287,13 @@ public class Agent implements Serializable{
 
 	
 	
-	void exchangeBasedContext() {
+	void exchangeBasedContext(Context context) {
 		//1.相手からContextをもらう
 		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
 	}
+	
+	
+	
 	
 	int exListSize() {
 		return exchangeList.size();
