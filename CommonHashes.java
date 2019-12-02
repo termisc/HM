@@ -6,5 +6,5 @@ package hashContextTest;
 	//試行の結果保存される
 	//試行を始めるときにロードされる
 public class CommonHashes {
-
+//test
 }

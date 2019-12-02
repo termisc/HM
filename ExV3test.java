@@ -64,11 +64,8 @@ public class ExV3test {
 				"		ExV5で生成されたリストをもとに、エージェント間のコンテクストの距離を測りたい...\n" + 
 				"		そこで手持ちの交換リストやContexの類似度をもとめるよ");
 
-		int i = 0;
 		for ( Agent a : agents) {
-			System.out.print(i+"  "+a.getName()+"  ");
 			a.showAttr();
-			i++;
 		}
 		
 		for ( Agent a : agents) {
