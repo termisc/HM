@@ -66,9 +66,26 @@ public class Util {
 		//よくつかうんので
 		try {
 			ObjectOutputStream objOutStream = 
+					new ObjectOutputStream(new FileOutputStream(filename));
+			objOutStream.writeObject(agents);
+			objOutStream.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("エージェント保存しましま");
+	}
+	
+	void saveCommoContexts(ArrayList<Context> contexts, String filename) {
+		//よくつかうんので
+		try {
+			ObjectOutputStream objOutStream = 
 					new ObjectOutputStream(
 							new FileOutputStream(filename));
-			objOutStream.writeObject(agents);
+			objOutStream.writeObject(contexts);
 			objOutStream.close();
 
 		} catch (FileNotFoundException e) {
@@ -78,10 +95,7 @@ public class Util {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-
-		System.out.println("エージェント保存しましま");
-
+		System.out.println("Contexts保存しましま");
 	}
 	
 	
@@ -115,9 +129,24 @@ public class Util {
 					
 					for(Agent a : agents ) {
 						for(Context co : a.getContexts()) {
-							System.out.println(co.getAttribute());
+							int attr = co.getAttribute();
+							ArrayList<String> h1 = contexts.get(co.getAttribute()).getHashes();
+							ArrayList<String> h2 = co.getHashes();
+							h1.addAll(h2);
+							contexts.get(attr).setHashes(h1);
+							
 						}
 					}
+					
+					int i = 0;
+					for(Context c : contexts) {
+						System.out.println(i);;
+						i++;
+						c.showHashes();
+					}
+					
+					
+					saveCommoContexts(contexts,"fuga.bin");	
 					
 					//contexts[2].showHashes();
 					System.out.println("こんてくすと");
@@ -160,6 +189,7 @@ public class Util {
 		case "context" :
 			System.out.println("✨");
 			showContexts(s,agents);
+			//数字でエージェントごとの
 			break;
 		case "train" :
 			System.out.println("💪");

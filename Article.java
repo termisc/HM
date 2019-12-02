@@ -11,7 +11,7 @@ public class Article implements Serializable{
 	private int transactionTime;
 	private String hashID;
 	private String author;
-	private List<String> hashList;
+	private ArrayList<String> hashList;
 	private int potentialAttribute;
 	private List<String> ownerList;
 	private Boolean isTrapped; 
@@ -62,7 +62,7 @@ public class Article implements Serializable{
 		return hashID;
 	}
 	
-	List<String> getHashList(){
+	ArrayList<String> getHashList(){
 		return hashList;
 	}
 	

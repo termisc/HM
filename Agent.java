@@ -127,6 +127,34 @@ public class Agent implements Serializable{
 		exUpper.add(A);
 	}
 	
+	void articleGenCommonContext(int simtime) {
+		Random rand = new Random();
+		int fav = potentialAttributes[Math.abs(rand.nextInt()) % POTENCIAL]; //pottencialからひとつ選ぶ
+		String p = RandomStringUtils.randomAlphabetic(16);
+		byte[] hashbyte = DigestUtils.md5(p);
+		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
+		Article A = new Article(result,name,simtime,fav);
+		articleList.add(A);		
+		exUpper.add(A);
+	}
+	
+	void articleGenOwnContext(int simtime) {
+		Random rand = new Random();
+		int fav = potentialAttributes[Math.abs(rand.nextInt()) % POTENCIAL]; //pottencialからひとつ選ぶ
+		String p = RandomStringUtils.randomAlphabetic(16);
+		byte[] hashbyte = DigestUtils.md5(p);
+		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
+		Context c = this.contexts.get(fav);
+		Article a = new Article(result,name,simtime,fav);
+		articleList.add(a);		
+		exUpper.add(a);
+	}
+	
+	void exchangeByContext(int simtime) {
+		
+	}
+	
+	
 	void addSpecial(Article a) {
 		articleList.add(a);		
 		exUpper.add(a);		
@@ -140,6 +168,9 @@ public class Agent implements Serializable{
 	void showArticle() {
 		for(Article s : articleList) {
 			System.out.println(s.getHashID() );
+			
+			
+			
 		}
 	}
 
@@ -216,7 +247,6 @@ public class Agent implements Serializable{
 	void makeContextfromPotentialAttributes() {		
 		//potencialAttrよりcontextを生成する
 		//Agent 生成時に一度だけ使われ		
-
 		for(Article s : articleList) {
 			for (int i = 0 ; i < potentialAttributes.length; i++) {
 				if (Math.abs(potentialAttributes[i] - s.getPotentialAttribute() ) < 5){
@@ -290,6 +320,41 @@ public class Agent implements Serializable{
 	void exchangeBasedContext(Context context) {
 		//1.相手からContextをもらう
 		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
+		// てもちのarticleの中から、もっとも適合度の高いものを選ぶ
+		//類似度の閾値を決めて、閾値が一定以上のものでもよいかもしれない
+		int[] points = new int[articleList.size()]; 
+		double max = 0.0;
+		
+		Jaccard jacc = new Jaccard();
+		for (Article a : articleList) {
+			//points[a.]
+			double c = jacc.apply(a.getHashList(), context.getHashes());
+			if (c > max) {
+				max = c;
+			}
+		}
+	}
+	
+	Article exchangeBasedContextA(Context context) {
+		//1.相手からContextをもらう
+		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
+		// てもちのarticleの中から、もっとも適合度の高いものを選ぶ
+		//類似度の閾値を決めて、閾値が一定以上のものでもよいかもしれない
+		int[] points = new int[articleList.size()]; 
+		Jaccard jacc = new Jaccard();
+		double max = 0.0;
+		int ret = 0;
+		int i = 0;
+		
+		for (Article a : articleList) {
+			//points[a.]
+			double c = jacc.apply(a.getHashList(), context.getHashes());
+			if (c > max) {
+			  ret = i;	
+			}
+			i++;
+		}
+		return articleList.get(ret);
 	}
 	
 	
