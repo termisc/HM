@@ -76,7 +76,6 @@ public class Agent implements Serializable{
 	}
 
 	
-
 	void setName(String _name) {
 		name = _name;
 	}
@@ -92,7 +91,6 @@ public class Agent implements Serializable{
 	List<Article> getExchangeList(){
 		return exchangeList;
 	}
-	
 	
 
 	int[] getPotentialAttributes_X() {
@@ -118,8 +116,12 @@ public class Agent implements Serializable{
 	
 	void articleGenFav(int simtime) {
 		Random rand = new Random();
-		int fav = potentialAttributes[Math.abs(rand.nextInt()) % POTENCIAL]; //pottencialからひとつ選ぶ
+		int favnum = Math.abs(rand.nextInt()) % POTENCIAL;
+		Context c = contexts.get(favnum);
+		int fav = potentialAttributes[favnum]; //pottencialからひとつ選ぶ
 		String p = RandomStringUtils.randomAlphabetic(16);
+		//System.out.println("fav = "+fav);
+		//System.out.println("contexts.length = "+contexts.size());
 		byte[] hashbyte = DigestUtils.md5(p);
 		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
 		Article A = new Article(result,name,simtime,fav);
@@ -139,6 +141,7 @@ public class Agent implements Serializable{
 	}
 	
 	void articleGenOwnContext(int simtime) {
+		//毎時での生成はこれ使います。
 		Random rand = new Random();
 		int fav = potentialAttributes[Math.abs(rand.nextInt()) % POTENCIAL]; //pottencialからひとつ選ぶ
 		String p = RandomStringUtils.randomAlphabetic(16);
@@ -148,6 +151,23 @@ public class Agent implements Serializable{
 		Article a = new Article(result,name,simtime,fav);
 		articleList.add(a);		
 		exUpper.add(a);
+	}
+	
+	void articleGenOwnContext(int simtime,int fav) {
+		//毎時での生成はこれ使います。
+		//Random rand = new Random();
+		//int fav = contextnum; //pottencialからひとつ選ぶ
+		String p = RandomStringUtils.randomAlphabetic(16);
+		byte[] hashbyte = DigestUtils.md5(p);
+		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
+		Context c = this.contexts.get(fav);
+		Article a = new Article(result,name,simtime,fav);
+		articleList.add(a);		
+		exUpper.add(a);
+		
+		contexts.get(fav).addHash(a.getHashID()+"♡");
+		//contexts.get(fav).deduplication();
+		
 	}
 	
 	void exchangeByContext(int simtime) {
@@ -168,9 +188,6 @@ public class Agent implements Serializable{
 	void showArticle() {
 		for(Article s : articleList) {
 			System.out.println(s.getHashID() );
-			
-			
-			
 		}
 	}
 
@@ -269,7 +286,7 @@ public class Agent implements Serializable{
 				for (int i =0 ; i < potentialAttributes.length; i++) {
 					if (Math.abs(potentialAttributes[i] - s.getPotentialAttribute() ) < 5){
 						System.out.print("❦");
-						contexts.get(i).addHash(s.getHashID()+"♡");
+						contexts.get(i).addHash(s.getHashID());
 						contexts.get(i).deduplication();
 					}
 				}           	
@@ -300,7 +317,7 @@ public class Agent implements Serializable{
 					if (Math.abs( c.getAttribute()- s.getPotentialAttribute() ) == 5){
 						System.out.println("from : " +  a.getName() + " to : " + name+" ❦ "+ s.getHashID());
 						c.addHash(s.getHashID());
-						c.addCash(s);
+						c.addCache(s);
 						c.deduplication();
 						exMiddle.add(s);
 						
@@ -333,6 +350,7 @@ public class Agent implements Serializable{
 				max = c;
 			}
 		}
+		System.out.println("result: "+max);
 	}
 	
 	Article exchangeBasedContextA(Context context) {
@@ -354,6 +372,7 @@ public class Agent implements Serializable{
 			}
 			i++;
 		}
+		System.out.println("EBCA result: "+max);
 		return articleList.get(ret);
 	}
 	
@@ -393,7 +412,8 @@ public class Agent implements Serializable{
 
 
 	void makeExchangeListLayers() {
-		
+		//層ごとにexchangeListを再構成する
+		//ほかのきっかけでexUpper、exMiddle,Exlowerなどに新作ができてるはずである。
 		exchangeList = new ArrayList<Article>();
 		uniteList (10,exUpper);
 		uniteList (10,exMiddle);

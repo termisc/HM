@@ -59,55 +59,41 @@ public class ExV3test {
 		}
 
 
-		System.out.println("2018/11/21ここの機能Exv4とかぶってしまったので、ここでは別のことをやります。\n" + 
-				"		クラス名も変えたほうがいいかもしれない\n" + 
-				"		ExV5で生成されたリストをもとに、エージェント間のコンテクストの距離を測りたい...\n" + 
-				"		そこで手持ちの交換リストやContexの類似度をもとめるよ");
+		System.out.println("ExV2で作成された"
+				+ "エージェントを任意のコマンドで操作します"
+				+ "Usageとは書いてないですそのうち角");
 
+		int agentCount = 0;
 		for ( Agent a : agents) {
+			System.out.print("["+agentCount+"] "+a.getName()+" ");
 			a.showAttr();
-		}
-		
-		for ( Agent a : agents) {
-			//a.dumpEx();
-		}
-
-		//やはりひとりのAgentに着目して近似度の高い個体をマッピングします
+			agentCount++;
+		}		
 
 		agents.get(0).getPotentialAttributes_X();
-
-
+		
 		Jaccard jacc = new Jaccard();
-
-
-
-
 		for (int k = 0 ; k < 0 ; k++ ) {
 			pair = util.ramdomMatch(Preference.agentnum);
 			//まず、最初の1000るーぷは他のagentから不作為に記事をDLする
 			//attributeに接続する記事を充実させる
 			util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]));
-			//excEOはそんなにつかわなくてもいいけどなんとなく関数にまとめてしまった機能だよ
+			//excEOはそんなにつかわなくてもいいけどなんとなく関数にまとめてしまった機能
+			//片方向の交換を二度行う　それだけ
 		}
-		
-		
+		int simtime = 127;
 
 		while(true) {
 			try{
 				//入力ストリームの生成
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
 				System.out.print("入力してください   ⇒  ");
 				String str = br.readLine();
-								
-				util.Commands(str,agents);
-
+				util.Commands(str,agents,simtime);
+				simtime ++;
 			}catch(IOException e){
 				System.out.println("Exception :" + e);     
 			}
-
 		}
-
 	}
-
 }

@@ -96,7 +96,7 @@ public class Context  implements Serializable{
 		}
 	}
 
-	 void addCash(Article s) {
+	 void addCache(Article s) {
 		 caches.add(s);
 		// TODO Auto-generated method stub
 		

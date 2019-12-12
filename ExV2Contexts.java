@@ -24,28 +24,29 @@ public class ExV2Contexts {
 
 		int simulateTime = 0;
 
-		String[] agentNames = {"alice","bob","carol","dave","eve","frank","gennie","hanna","jack","kim","liam","olivia","quincy","pat","richard","sally","thomas","ursula","victor","wendy","xiao","yang","zora","maria","john"};
+		String[] agentNames = {"Alice","Bob","Carol","Dave","Eve","Frank","Gennie","Hanna","Jack","Kim","Liam","Olivia","Quincy","Pat","Richard","Sally","Thomas","Ursula","Victor","Wendy","Xiao","Yang","Zora","Maria","John"};
 
-		//Contextをよみこみます
-		ArrayList<Context> contexts = new ArrayList<Context>();
-		try {
-			ObjectInputStream objInStream 
-			= new ObjectInputStream(
-					new FileInputStream("fuga.bin"));
-			contexts = (ArrayList<Context> ) objInStream.readObject();
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+		if (false) {
+			//Contextをよみこみます
+			ArrayList<Context> contexts = new ArrayList<Context>();
+			try {
+				ObjectInputStream objInStream 
+				= new ObjectInputStream(
+						new FileInputStream("fuga.bin"));
+				contexts = (ArrayList<Context> ) objInStream.readObject();
+
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 		}
-		
-		
+
 
 		//Context、空要素けします
-
 		//25人のエージェントをつくります
 		ArrayList<Agent> agents = new ArrayList<Agent>();
 		for (int i = 0 ; i < Preference.agentnum ; i++) {
@@ -60,11 +61,7 @@ public class ExV2Contexts {
 			agents.get(i).makeContextfromPotentialAttributes();	
 			agents.get(i).showAttr();
 		}
-
 		simulateTime++;
-
-
-
 
 		//エージェント間の遭遇確率をよみこみます
 		float[][] compatibility = new float[Preference.agentnum][Preference.agentnum];
@@ -136,6 +133,7 @@ public class ExV2Contexts {
 		}
 
 		System.out.println("エージェント保存したよ\n");
+		System.out.println("simttime:"+ simulateTime);
 		agents.get(0).dumpEx();
 
 	}
