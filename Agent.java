@@ -124,9 +124,9 @@ public class Agent implements Serializable{
 		//System.out.println("contexts.length = "+contexts.size());
 		byte[] hashbyte = DigestUtils.md5(p);
 		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
-		Article A = new Article(result,name,simtime,fav);
-		articleList.add(A);		
-		exUpper.add(A);
+		Article a = new Article(result,name,simtime,fav);
+		articleList.add(a);		
+		exUpper.add(a);
 	}
 	
 	void articleGenCommonContext(int simtime) {
@@ -148,9 +148,9 @@ public class Agent implements Serializable{
 		byte[] hashbyte = DigestUtils.md5(p);
 		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
 		Context c = this.contexts.get(fav);
-		Article a = new Article(result,name,simtime,fav);
-		articleList.add(a);		
-		exUpper.add(a);
+		Article a = new Article(result,name,simtime,c.getAttribute());
+		articleList.add(0,a);		
+		exUpper.add(0,a);
 	}
 	
 	void articleGenOwnContext(int simtime,int fav) {
@@ -161,8 +161,9 @@ public class Agent implements Serializable{
 		byte[] hashbyte = DigestUtils.md5(p);
 		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
 		Context c = this.contexts.get(fav);
-		Article a = new Article(result,name,simtime,fav);
-		articleList.add(a);		
+		Article a = new Article(result,name,simtime,c.getAttribute());
+		System.out.println("gen article test " + result);
+		articleList.add(0,a);		
 		exUpper.add(a);
 		
 		contexts.get(fav).addHash(a.getHashID()+"♡");
@@ -308,31 +309,26 @@ public class Agent implements Serializable{
 				}
 			}
 			if (collision == false) {
-				articleList.add(s);
+				articleList.add(0,s);
+
 				if (s.isTrapped()) {
 					System.out.println("trapped Article : " + s.getHashID() + ", from : " +  a.getName() + ", to : " + name );
 				}
-				
+
 				for (Context c : contexts) {
-					if (Math.abs( c.getAttribute()- s.getPotentialAttribute() ) == 5){
-						System.out.println("from : " +  a.getName() + " to : " + name+" ❦ "+ s.getHashID());
+					if (Math.abs( c.getAttribute()- s.getPotentialAttribute() ) < 5){
+						System.out.println("from : " +  a.getName() + " to : " + name+" ❦❦❦❦❦❦ "+ s.getHashID());
+						System.out.println(" ❦❦❦❦❦❦ ");
 						c.addHash(s.getHashID());
 						c.addCache(s);
 						c.deduplication();
-						exMiddle.add(s);
-						
+						exMiddle.add(0,s);
+						makeExchangeListLayers();
 					}
 				}           	
 			}
 		}	
 	}
-	
-	
-	
-
-	
-
-	
 	
 	void exchangeBasedContext(Context context) {
 		//1.相手からContextをもらう

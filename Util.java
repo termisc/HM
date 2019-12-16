@@ -29,23 +29,31 @@ public class Util {
 		case "dump" :
 			System.out.println("dump");
 			break;
+			
 		case "save" :
 			System.out.println("save");
 			//saveAgents(agents,"hoge.bin");
 			save(agents,s);
-			break;	
+			break;
+			
 		case "meet" :
 			session(s,agents);
 			break;
+			
+		case "exlist" :
+			//交換リストを表示します
+			showExList(s,agents);
+			break;
+			
 		case "context" :
 			System.out.println("✨");
 			showContexts(s,agents);
 			//数字でエージェントごとの
 			break;
 			
-		case "alist" :
+		case "article" :
 			System.out.println("alist✨");
-			alist(s,agents);
+			showArticleList(s,agents);
 			//showContexts(s,agents);
 			//数字でエージェントごとの
 			break;
@@ -75,13 +83,25 @@ public class Util {
 		return simtime;
 	}
 
-	void alist(String s, ArrayList<Agent> agents) {
+	void showArticleList(String s, ArrayList<Agent> agents) {
 		// TODO Auto-generated method stub
 		String[] args = s.split(" "); 
 		args = Arrays.copyOfRange(args, 1, args.length);
 		int agentnum = -1;
 		agentnum = Integer.parseInt(args[0]);
 		agents.get(agentnum).showArticle();
+	}
+	
+	void showExList(String s, ArrayList<Agent> agents) {
+		String[] args = s.split(" "); 
+		args = Arrays.copyOfRange(args, 1, args.length);
+		int agentnum = -1;
+		agentnum = Integer.parseInt(args[0]);
+		try{
+			agents.get(agentnum).dumpEx();
+		}catch(IndexOutOfBoundsException exception) {
+			System.out.println("IndexOutOfBoundsException");
+		}		
 	}
 
 	List<Article> deduplication(List<Article> articleList) {
@@ -359,7 +379,7 @@ public class Util {
 			}
 		}
 		if(error_flag == false && obj2_flag == true) {
-		  System.out.println("!!!");
+		  //System.out.println("!!!");
 		  exchengeEachOther(agents.get(agent1),agents.get(agent2));
 		}		
 	}
@@ -375,10 +395,13 @@ public class Util {
 		int agentnum = -1;
 		agentnum = Integer.parseInt(args[0]);
 		Agent a = agents.get(agentnum);
+		//pereferensys.favnumじゃなくてAgentのContextの配列長さを使え
 		for (int fav = 0 ; fav < Preference.favnum; fav++) {
 			a.articleGenOwnContext(simtime,fav);
-			a.makeExchangeListLayers();
+			//a.
+			
 		}
+		a.makeExchangeListLayers();
 		return 0;
 	}
 
