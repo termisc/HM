@@ -294,10 +294,7 @@ public class Agent implements Serializable{
 			}
 		}	
 	}
-	
-	
-	
-   
+ 
 	
 	void exchange_T4(Agent a){
 		List<Article> downLoads = a.getExchangeList();

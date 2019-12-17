@@ -68,6 +68,11 @@ public class Util {
 			genAllContext(s,simtime,agents);
 			break;
 			
+		case "jacc" :
+			System.out.println("gen article from context");
+			jaccardContext(s,simtime,agents);
+			break;
+			
 		case "msc" :
 			System.out.println("💪");
 			sessionContext(s,agents);
@@ -379,7 +384,6 @@ public class Util {
 			}
 		}
 		if(error_flag == false && obj2_flag == true) {
-		  //System.out.println("!!!");
 		  exchengeEachOther(agents.get(agent1),agents.get(agent2));
 		}		
 	}
@@ -392,9 +396,9 @@ public class Util {
 			System.out.println("parse error, usage : genac int(Agent)");
 			return 1;
 		}
-		int agentnum = -1;
-		agentnum = Integer.parseInt(args[0]);
-		Agent a = agents.get(agentnum);
+		int agentNum = -1;
+		agentNum = Integer.parseInt(args[0]);
+		Agent a = agents.get(agentNum);
 		//pereferensys.favnumじゃなくてAgentのContextの配列長さを使え
 		for (int fav = 0 ; fav < Preference.favnum; fav++) {
 			a.articleGenOwnContext(simtime,fav);
@@ -403,6 +407,41 @@ public class Util {
 		}
 		a.makeExchangeListLayers();
 		return 0;
+	}
+	
+	void jaccardContext(String s,int simtime,ArrayList<Agent> agents) {
+		
+		//int agentnum1 int contextnum1 int agentnum2 int contextnum2
+		// contextの類似度を図る
+		//急いでいろのバリデーションなし
+		int agentNum1 = -1;
+		int contextNum1 = -1;
+		int agentNum2 = -1;
+		int contextNum2 = -1;
+		
+		String[] args = s.split(" ");
+		args = Arrays.copyOfRange(args, 1, args.length);
+		if ( args.length != 4 ) {
+			System.out.println("parse error, usage : genac int(Agent1) int(Agent1.Context) int(Agent2) int(Agent2.Context)");
+			return;
+		}
+		
+		agentNum1 = Integer.parseInt(args[0]);
+		contextNum1 = Integer.parseInt(args[1]);
+		agentNum2 = Integer.parseInt(args[2]);
+		contextNum2 = Integer.parseInt(args[3]);
+		
+		try {
+			Agent agent1 = agents.get(agentNum1);
+			Agent agent2 = agents.get(agentNum2);
+			Context context1 = agent1.getContexts().get(contextNum1);
+			Context context2 = agent2.getContexts().get(contextNum2);
+		}
+		catch(IndexOutOfBoundsException exception) {
+		    //handleTheExceptionSomehow(exception);
+			System.out.println("error");
+		}
+		
 	}
 
     
