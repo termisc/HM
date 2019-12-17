@@ -166,7 +166,7 @@ public class Agent implements Serializable{
 		articleList.add(0,a);		
 		exUpper.add(a);
 		
-		contexts.get(fav).addHash(a.getHashID()+"♡");
+		contexts.get(fav).addHash(a.getHashID());
 		//contexts.get(fav).deduplication();
 		
 	}
@@ -426,5 +426,3 @@ public class Agent implements Serializable{
 		//自動生成後に行う
 	}
 }
-
-//sssss

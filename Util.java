@@ -69,7 +69,7 @@ public class Util {
 			break;
 			
 		case "jacc" :
-			System.out.println("gen article from context");
+			System.out.println("比較 context");
 			jaccardContext(s,simtime,agents);
 			break;
 			
@@ -436,6 +436,13 @@ public class Util {
 			Agent agent2 = agents.get(agentNum2);
 			Context context1 = agent1.getContexts().get(contextNum1);
 			Context context2 = agent2.getContexts().get(contextNum2);
+			System.out.println("✨");
+			context1.showHashes();
+			System.out.println("✨");
+			context2.showHashes();
+			Jaccard jacc = new Jaccard();
+			double result = jacc.apply(context1.getHashes(), context2.getHashes());
+			System.out.println(result);
 		}
 		catch(IndexOutOfBoundsException exception) {
 		    //handleTheExceptionSomehow(exception);

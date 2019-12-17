@@ -71,7 +71,7 @@ public class ExV3test {
 		}		
 
 		agents.get(0).getPotentialAttributes_X();
-		
+	
 		Jaccard jacc = new Jaccard();
 		for (int k = 0 ; k < 0 ; k++ ) {
 			pair = util.ramdomMatch(Preference.agentnum);
