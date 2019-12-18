@@ -1,8 +1,9 @@
 package hashContextTest;
 
 public class Preference {
-	public static int topicnum = 255;
-	public static int agentnum = 25;
-	public static int favnum = 5;
+	public static int topicNum = 255;
+	public static int agentNum = 25;
+	public static int favNum = 5;
+	public static int messageLevel = 5;
 
 }

@@ -43,7 +43,7 @@ public class ExV3test {
 		}
 
 		//エージェント間の遭遇確率をよみこみます
-		float[][] compatibility = new float[Preference.agentnum][Preference.agentnum];
+		float[][] compatibility = new float[Preference.agentNum][Preference.agentNum];
 		try {
 			ObjectInputStream objInStream 
 			= new ObjectInputStream(
@@ -74,7 +74,7 @@ public class ExV3test {
 	
 		Jaccard jacc = new Jaccard();
 		for (int k = 0 ; k < 0 ; k++ ) {
-			pair = util.ramdomMatch(Preference.agentnum);
+			pair = util.ramdomMatch(Preference.agentNum);
 			//まず、最初の1000るーぷは他のagentから不作為に記事をDLする
 			//attributeに接続する記事を充実させる
 			util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]));

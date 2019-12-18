@@ -52,7 +52,7 @@ public class Agent implements Serializable{
 	//もらった記事を新着
 	//upper:middle:bottom比　1:10:100くらい？
 	
-    int POTENCIAL = Preference.favnum; //5です
+    int POTENCIAL = Preference.favNum; //5です
 
 	Agent(){
 		//int POTENCIAL = 5;
@@ -67,14 +67,17 @@ public class Agent implements Serializable{
 		potentialAttributes = new int[POTENCIAL];
 		contexts = new ArrayList<Context>();
 		Random rand = new Random();
-		for(int i = 0; i < POTENCIAL ; i++ ) { contexts.add(new Context(Math.abs(rand.nextInt() % Preference.topicnum ))); }
+		for(int i = 0; i < POTENCIAL ; i++ ) { contexts.add(new Context(Math.abs(rand.nextInt() % Preference.topicNum ))); }
 		
 		for(int i = 0; i < POTENCIAL ;i++) {
-			potentialAttributes[i] = Math.abs(rand.nextInt() % Preference.topicnum );
+			potentialAttributes[i] = Math.abs(rand.nextInt() % Preference.topicNum );
 		}
 		
 	}
 
+	void message(int commentLevel,String message) {
+		
+	}
 	
 	void setName(String _name) {
 		name = _name;
@@ -109,7 +112,7 @@ public class Agent implements Serializable{
 		String p = RandomStringUtils.randomAlphabetic(16);
 		byte[] hashbyte = DigestUtils.md5(p);
 		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
-		Article A = new Article(result,name,simtime,Math.abs(rand.nextInt() % Preference.topicnum ));
+		Article A = new Article(result,name,simtime,Math.abs(rand.nextInt() % Preference.topicNum ));
 		articleList.add(A);		
 		exLower.add(A);
 	}
@@ -162,12 +165,12 @@ public class Agent implements Serializable{
 		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
 		Context c = this.contexts.get(fav);
 		Article a = new Article(result,name,simtime,c.getAttribute());
-		System.out.println("gen article test " + result);
+		//System.out.println("gen article test " + result);
 		articleList.add(0,a);		
 		exUpper.add(a);
 		
 		contexts.get(fav).addHash(a.getHashID());
-		//contexts.get(fav).deduplication();
+		//contexts.get(fav).deduplication();//新造なので重複排除は必要なし
 		
 	}
 	
@@ -314,8 +317,7 @@ public class Agent implements Serializable{
 
 				for (Context c : contexts) {
 					if (Math.abs( c.getAttribute()- s.getPotentialAttribute() ) < 5){
-						System.out.println("from : " +  a.getName() + " to : " + name+" ❦❦❦❦❦❦ "+ s.getHashID());
-						System.out.println(" ❦❦❦❦❦❦ ");
+						System.out.println(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute());
 						c.addHash(s.getHashID());
 						c.addCache(s);
 						c.deduplication();
@@ -411,7 +413,6 @@ public class Agent implements Serializable{
 		uniteList (10,exUpper);
 		uniteList (10,exMiddle);
 		uniteList (10,exLower);
-
 	}
 
 	void makeArticleBasedByContext() {

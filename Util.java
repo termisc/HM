@@ -65,7 +65,7 @@ public class Util {
 		
 		case "gen" :
 			System.out.println("gen article from context");
-			genAllContext(s,simtime,agents);
+			genArticleFromAllContext(s,simtime,agents);
 			break;
 			
 		case "jacc" :
@@ -388,7 +388,7 @@ public class Util {
 		}		
 	}
 
-	int genAllContext(String s,int simtime,ArrayList<Agent> agents) {
+	int genArticleFromAllContext(String s,int simtime,ArrayList<Agent> agents) {
 		//そのAgentのContextに関する記事をひとつずつ生成する
 		String[] args = s.split(" ");
 		args = Arrays.copyOfRange(args, 1, args.length);
@@ -400,7 +400,7 @@ public class Util {
 		agentNum = Integer.parseInt(args[0]);
 		Agent a = agents.get(agentNum);
 		//pereferensys.favnumじゃなくてAgentのContextの配列長さを使え
-		for (int fav = 0 ; fav < Preference.favnum; fav++) {
+		for (int fav = 0 ; fav < Preference.favNum; fav++) {
 			a.articleGenOwnContext(simtime,fav);
 			//a.
 			

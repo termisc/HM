@@ -14,7 +14,7 @@ public class ExV4 {
 	public static void main(String[] args){
 		
 		System.out.println("Init.javaで生成されたAgent,mapを読み込み、Agent間で記事を交換\n　"
-				+ "各AgentがもつContextに、共通！！！のhashを持たせるのが目的です");
+				+ "各AgentがもつContextに、共のhashを持たせるのが目的です");
 		
 		
 		Random rand = new Random();
@@ -44,7 +44,7 @@ public class ExV4 {
 		
 		
 		//エージェント間の遭遇確率をよみこみます
-		float[][] compatibility = new float[Preference.agentnum][Preference.agentnum];
+		float[][] compatibility = new float[Preference.agentNum][Preference.agentNum];
 		try {
 			ObjectInputStream objInStream 
 			= new ObjectInputStream(
@@ -74,14 +74,29 @@ public class ExV4 {
 		//agents.get(0).dumpExMiddle();
 		
 		
-		System.out.println("randome match はじあるよ");
+		System.out.println("randome match はじまるよ");
+		System.out.println("おわり");
+		
+		//System.exit(0);
+		
+		
 
 		
+		
 		for (int k = 0 ; k < 1000 ; k++ ) {
-			pair = util.ramdomMatch(Preference.agentnum);
+			//記事を生成する
+			//連番で記事をつくります
+			
+			for (int fav = 0 ; fav < Preference.favNum; fav++) {
+				agents.get(k % Preference.agentNum).articleGenOwnContext(simulateTime,fav);
+			}
+				
+			pair = util.ramdomMatch(Preference.agentNum);
 				//まず、最初の1000るーぷは他のagentから不作為に記事をDLする
 				//attributeに接続する記事を充実させる
 			util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]));
+			
+			simulateTime ++;
 		}
 		
 		//1000回のお見合いで488件の（同じコンテクストについて、agentどうしで共通するHashが追加されました）

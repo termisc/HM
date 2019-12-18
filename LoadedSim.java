@@ -47,7 +47,7 @@ public class LoadedSim {
 		//確率はdouble,floatあるがfloatでよい	
 		Random rnd = new Random();
 
-		float[][] compatibility = new float[Preference.agentnum][Preference.agentnum];
+		float[][] compatibility = new float[Preference.agentNum][Preference.agentNum];
 		try {
 			ObjectInputStream objInStream 
 			= new ObjectInputStream(

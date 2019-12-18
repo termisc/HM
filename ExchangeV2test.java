@@ -29,7 +29,7 @@ public class ExchangeV2test {
 
 		//25人のエージェントをつくります
 		ArrayList<Agent> agents = new ArrayList<Agent>();
-		for (int i = 0 ; i < Preference.agentnum ; i++) {
+		for (int i = 0 ; i < Preference.agentNum ; i++) {
 			simulateTime++;
 			agents.add(new Agent());
 			agents.get(i).setName(agentNames[i]);
@@ -46,7 +46,7 @@ public class ExchangeV2test {
 		
 		
 		//エージェント間の遭遇確率をよみこみます
-		float[][] compatibility = new float[Preference.agentnum][Preference.agentnum];
+		float[][] compatibility = new float[Preference.agentNum][Preference.agentNum];
 		try {
 			ObjectInputStream objInStream 
 			= new ObjectInputStream(
@@ -95,7 +95,7 @@ public class ExchangeV2test {
 			}
 			
 			//System.out.println("Round" + i);
-			int match = Math.abs(rand.nextInt()) % (Preference.agentnum - 1) + 1; //1~24	
+			int match = Math.abs(rand.nextInt()) % (Preference.agentNum - 1) + 1; //1~24	
 			util.exchengeEachOther(agents.get(0), agents.get(match));
 		}
 						

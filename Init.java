@@ -22,7 +22,7 @@ public class Init {
 
 		//25人のエージェントをつくります
 		ArrayList<Agent> agents = new ArrayList<Agent>();
-		for (int i = 0 ; i < Preference.agentnum ; i++) {
+		for (int i = 0 ; i < Preference.agentNum ; i++) {
 			agents.add(new Agent());
 			agents.get(i).setName("no_"+String.valueOf(i));
 			for (int j = 0; j < 300 ; j++) {
@@ -38,9 +38,9 @@ public class Init {
 		//確率はdouble,floatあるがfloatでよい	
 		//この配列は、各エージェント間の確率的な距離を表すMapとみてよい。
 			
-		float[][] compatibility = new float[Preference.agentnum][Preference.agentnum];
-		for (int i = 0 ; i < Preference.agentnum ; i++) {
-			for (int j = 0 ; j < Preference.agentnum ; j++) {
+		float[][] compatibility = new float[Preference.agentNum][Preference.agentNum];
+		for (int i = 0 ; i < Preference.agentNum ; i++) {
+			for (int j = 0 ; j < Preference.agentNum ; j++) {
 				compatibility[i][j] = rand.nextFloat();
 			}
 		}
@@ -52,7 +52,7 @@ public class Init {
 		limen = 0.2f;
 		
 		for (int k = 0 ; k < 100000 ; k++ ) {
-			pair = util.ramdomMatch(Preference.agentnum);
+			pair = util.ramdomMatch(Preference.agentNum);
 			limen = rnd.nextFloat();
 			if (compatibility[pair[0]][ pair[1]] > limen) {
 				//まず、最初の1000るーぷは他のagentから不作為に記事をDLする

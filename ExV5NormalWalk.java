@@ -54,7 +54,7 @@ public class ExV5NormalWalk {
 			
 		  //遭遇です　30秒に一回どこかで起こる
 		  if(k % 30 == 0) {
-			  pair = util.ramdomMatch(Preference.agentnum);				
+			  pair = util.ramdomMatch(Preference.agentNum);				
 				util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]));
 		  }
 		  
