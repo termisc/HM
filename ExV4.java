@@ -1,9 +1,11 @@
 package hashContextTest;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -102,7 +104,8 @@ public class ExV4 {
 		//1000回のお見合いで488件の（同じコンテクストについて、agentどうしで共通するHashが追加されました）
 		// 数字でみると488/50000
 		//この記事では新しく生成されないので記事は500件ていど
-
+		
+		//20 simtimeにいちど　、Agentは輪番で記事を生成する　25x20、500simtimeに 
 
 
 		try {
@@ -122,6 +125,19 @@ public class ExV4 {
 
 
 		System.out.println("エージェント保存しましま");
+		
+		while(true) {
+			try{
+				//入力ストリームの生成
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				System.out.print("入力してください   ⇒  ");
+				String str = br.readLine();
+				util.Commands(str,agents,simulateTime);
+				simulateTime ++;
+			}catch(IOException e){
+				System.out.println("Exception :" + e);     
+			}
+		}
 
 
 
