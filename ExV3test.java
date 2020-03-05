@@ -43,11 +43,12 @@ public class ExV3test {
 		}
 
 		//エージェント間の遭遇確率をよみこみます
+	
 		float[][] compatibility = new float[Preference.agentNum][Preference.agentNum];
 		try {
 			ObjectInputStream objInStream 
 			= new ObjectInputStream(
-					new FileInputStream("map.bin"));
+					new FileInputStream("lib/map.bin"));
 			compatibility = (float[][] ) objInStream.readObject();
 
 		} catch (FileNotFoundException e) {

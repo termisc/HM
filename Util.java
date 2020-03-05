@@ -30,6 +30,11 @@ public class Util {
 			System.out.println("dump");
 			break;
 			
+		case "guide" :
+			System.out.println("guide");
+			guide(s,agents);
+			break;
+			
 		case "save" :
 			System.out.println("save");
 			//saveAgents(agents,"hoge.bin");
@@ -74,8 +79,12 @@ public class Util {
 			break;
 			
 		case "msc" :
-			System.out.println("💪");
+			System.out.println("Meet S Context");
 			sessionContext(s,agents);
+			break;
+			
+		case "cache" :
+			showCaches(s,agents);
 			break;
 			
 		case "exit" :
@@ -87,6 +96,22 @@ public class Util {
 		
 		return simtime;
 	}
+	
+	void showCaches(String s, ArrayList<Agent> agents) {
+		
+		String[] args = s.split(" "); 
+		args = Arrays.copyOfRange(args, 1, args.length);
+		int agentnum = -1;
+		agentnum = Integer.parseInt(args[0]);
+		List<Context> contexts = agents.get(agentnum).getContexts();
+		
+		
+		for(Context c : contexts) {
+			c.showCaches();
+		}
+		
+		
+	}
 
 	void showArticleList(String s, ArrayList<Agent> agents) {
 		// TODO Auto-generated method stub
@@ -95,6 +120,15 @@ public class Util {
 		int agentnum = -1;
 		agentnum = Integer.parseInt(args[0]);
 		agents.get(agentnum).showArticle();
+	}
+	
+	void guide(String s, ArrayList<Agent> agents) {	
+		int agentCount = 0;
+		for ( Agent a : agents) {
+			System.out.print("["+agentCount+"] "+a.getName()+" ");
+			a.showAttr();
+			agentCount++;
+		}		
 	}
 	
 	void showExList(String s, ArrayList<Agent> agents) {
@@ -310,7 +344,10 @@ public class Util {
 	}
 	
 	int sessionContext(String s,ArrayList<Agent> agents ) {
-		//(1)要求エージェントの番号　(2)コンテクストの番号 (3)供給エージェントの番号
+		//(1)要求エの番号
+		//(2)要求エが渡すコンテクストの番号
+		//(3)供給エの番号
+		//あたえられた要求エのコンテクストに対して、もっとも近い供給エのコンテクストに属する記事を渡す
 		String[] args = s.split(" ");
 		args = Arrays.copyOfRange(args, 1, args.length);
 		//validationしません　いそがしいから
@@ -319,7 +356,7 @@ public class Util {
 		int context = -1;
 		System.out.println(args.length);
 		if ( args.length != 3) {
-			System.out.println("parse error, usage : sc int(Agent request) int(Agent reply) int(context) ");
+			System.out.println("parse error, usage : smc int(Agent request) int(Agent reply) int(context) ");
 			return 1;
 		}
 		agent1 = Integer.parseInt(args[0]);
@@ -422,7 +459,7 @@ public class Util {
 		String[] args = s.split(" ");
 		args = Arrays.copyOfRange(args, 1, args.length);
 		if ( args.length != 4 ) {
-			System.out.println("parse error, usage : genac int(Agent1) int(Agent1.Context) int(Agent2) int(Agent2.Context)");
+			System.out.println("parse error, usage : jacc int(Agent1) int(Agent1.Context) int(Agent2) int(Agent2.Context)");
 			return;
 		}
 		

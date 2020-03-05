@@ -67,6 +67,12 @@ public class Context  implements Serializable{
         });
 	}
 	
+	void showCaches(){
+		hashes.forEach(c -> {
+            System.out.println(c);
+        });
+	}
+	
 	String showHashesForLog(){
 		String log = "";
 		for (String s : hashes) {
