@@ -22,7 +22,7 @@ public class Agent implements Serializable{
 	//pttencialは若干嘘なのであんまりリッチな書き方したくない
 	//明示的な指示で優先的に流すにしても
 	//ログ取りで困ったらやるべきか？
-	
+
 	private List<Integer> potentialAttributes_l;
 
 	private List<Article> articleList;
@@ -51,8 +51,8 @@ public class Agent implements Serializable{
 	private List<Article> exLower;
 	//もらった記事を新着
 	//upper:middle:bottom比　1:10:100くらい？
-	
-    int POTENCIAL = Preference.favNum; //5です
+
+	int POTENCIAL = Preference.favNum; //5です
 
 	Agent(){
 		//int POTENCIAL = 5;
@@ -62,23 +62,23 @@ public class Agent implements Serializable{
 		exUpper =  new ArrayList<Article>();
 		exMiddle =  new ArrayList<Article>();
 		exLower =  new ArrayList<Article>();
-		
-		
+
+
 		potentialAttributes = new int[POTENCIAL];
 		contexts = new ArrayList<Context>();
 		Random rand = new Random();
 		for(int i = 0; i < POTENCIAL ; i++ ) { contexts.add(new Context(Math.abs(rand.nextInt() % Preference.topicNum ))); }
-		
+
 		for(int i = 0; i < POTENCIAL ;i++) {
 			potentialAttributes[i] = Math.abs(rand.nextInt() % Preference.topicNum );
 		}
-		
+
 	}
 
 	void message(int commentLevel,String message) {
-		
+
 	}
-	
+
 	void setName(String _name) {
 		name = _name;
 	}
@@ -94,7 +94,7 @@ public class Agent implements Serializable{
 	List<Article> getExchangeList(){
 		return exchangeList;
 	}
-	
+
 
 	int[] getPotentialAttributes_X() {
 		return potentialAttributes;
@@ -116,7 +116,7 @@ public class Agent implements Serializable{
 		articleList.add(A);		
 		exLower.add(A);
 	}
-	
+
 	void articleGenFav(int simtime) {
 		Random rand = new Random();
 		int favnum = Math.abs(rand.nextInt()) % POTENCIAL;
@@ -131,7 +131,7 @@ public class Agent implements Serializable{
 		articleList.add(a);		
 		exUpper.add(a);
 	}
-	
+
 	void articleGenCommonContext(int simtime) {
 		Random rand = new Random();
 		int fav = potentialAttributes[Math.abs(rand.nextInt()) % POTENCIAL]; //pottencialからひとつ選ぶ
@@ -142,7 +142,7 @@ public class Agent implements Serializable{
 		articleList.add(A);		
 		exUpper.add(A);
 	}
-	
+
 	void articleGenOwnContext(int simtime) {
 		//毎時での生成はこれ使います。
 		Random rand = new Random();
@@ -155,7 +155,7 @@ public class Agent implements Serializable{
 		articleList.add(0,a);		
 		exUpper.add(0,a);
 	}
-	
+
 	void articleGenOwnContext(int simtime,int fav) {
 		//毎時での生成はこれ使います。
 		//Random rand = new Random();
@@ -168,17 +168,17 @@ public class Agent implements Serializable{
 		//System.out.println("gen article test " + result);
 		articleList.add(0,a);		
 		exUpper.add(a);
-		
+
 		contexts.get(fav).addHash(a.getHashID());
 		//contexts.get(fav).deduplication();//新造なので重複排除は必要なし
-		
+
 	}
-	
+
 	void exchangeByContext(int simtime) {
-		
+
 	}
-	
-	
+
+
 	void addSpecial(Article a) {
 		articleList.add(a);		
 		exUpper.add(a);		
@@ -203,7 +203,7 @@ public class Agent implements Serializable{
 		}
 		System.out.print("},\n");
 	}
-	
+
 	void showHashes(){
 		//余裕があればjson形式で吐く いまではない
 		System.out.print("\"attr\" : {");
@@ -216,8 +216,8 @@ public class Agent implements Serializable{
 		}
 		System.out.print("},\n");
 	}
-	
-	
+
+
 
 	//機能検証用、articleListから最新記事をもってくるだけ
 	void makeaExchangeListSimple() {
@@ -297,8 +297,8 @@ public class Agent implements Serializable{
 			}
 		}	
 	}
- 
-	
+
+
 	void exchange_T4(Agent a){
 		List<Article> downLoads = a.getExchangeList();
 		for (Article s : downLoads) {
@@ -328,27 +328,44 @@ public class Agent implements Serializable{
 			}
 		}	
 	}
-	
+
 	void exchangeBasedContext(Context context) {
 		//1.相手からContextをもらう
 		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
-		// てもちのarticleの中から、もっとも適合度の高いものを選ぶ
 		//類似度の閾値を決めて、閾値が一定以上のものでもよいかもしれない
+		//contextのjaccard係数が高ければ、(jaccard > 0.2) で、ContextのCacheから新着5件 (0.2はPreferencesから読むようにしよう)
+
+		int before = context.caches.size();
 		int[] points = new int[articleList.size()]; 
 		double max = 0.0;
-		
+
 		Jaccard jacc = new Jaccard();
-		for (Article a : articleList) {
-			//points[a.]
-			double c = jacc.apply(a.getHashList(), context.getHashes());
-			if (c > max) {
-				max = c;
+		for(Context c : contexts) {
+			if ( jacc.apply(c.getHashes(), context.getHashes()) > 0.2 ) {
+				System.out.println("☺️"+ c.caches.size() + " caches will send");
+				//contexのキャッシュ上位5件を私ます。
+				int amountOfCache = c.caches.size();
+				if (amountOfCache < 5) {
+					//すべてのcontext
+					context.caches.addAll(c.caches);
+				}
+				//cacheが五件以下ならcacheのすべて。cacheが五件以上なら最新5件を渡します。
+				//最新5件
+				List<Article> newer = c.caches.subList(c.caches.size()-5,c.caches.size()-1);
+				context.caches.addAll(newer);
 			}
 		}
-		System.out.println("result: "+max);
 	}
-	
+
+
+	void showCaches(Context context) {
+		for(Context c : contexts) {
+			c.showCaches();
+		}
+	}
+
 	Article exchangeBasedContextA(Context context) {
+		//いまはつかってないです　2020/03/02
 		//1.相手からContextをもらう
 		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
 		// てもちのarticleの中から、もっとも適合度の高いものを選ぶ
@@ -358,30 +375,29 @@ public class Agent implements Serializable{
 		double max = 0.0;
 		int ret = 0;
 		int i = 0;
-		
 		for (Article a : articleList) {
 			//points[a.]
 			double c = jacc.apply(a.getHashList(), context.getHashes());
 			if (c > max) {
-			  ret = i;	
+				ret = i;	
 			}
 			i++;
 		}
 		System.out.println("EBCA result: "+max);
 		return articleList.get(ret);
 	}
-	
-	
-	
-	
+
+
+
+
 	int exListSize() {
 		return exchangeList.size();
 	}
-	
+
 	int mSize() {
 		return exMiddle.size();
 	}
-	
+
 	void uniteList(int num, List<Article> articleList) {
 		if (articleList.size() <= num ){
 			exchangeList.addAll(articleList);
@@ -392,13 +408,13 @@ public class Agent implements Serializable{
 			}
 		}	
 	}
-	
+
 	void dumpExMiddle() {
 		for(Article s : exMiddle) {
 			s.ShowArticleInfo();
 		}
 	}
-	
+
 	void dumpEx() {
 		for(Article s : exchangeList) {
 			s.ShowArticleInfo();
