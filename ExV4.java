@@ -20,7 +20,7 @@ public class ExV4 {
 
 
 		Random rand = new Random();
-		int randomNum = rand.nextInt();
+		//int randomNum = rand.nextInt();
 		Util util = new Util();		
 		int[] pair = util.ramdomMatch(2);
 		Misc misc = new Misc();
@@ -85,9 +85,9 @@ public class ExV4 {
 
 
 
-		for (int k = 0 ; k < 1000 ; k++ ) {
+		for (int k = 0 ; k < 0 ; k++ ) {
 			//記事を生成する
-			//連番で記事をつくります
+			//輪番で記事をつくります
 
 			for (int fav = 0 ; fav < Preference.favNum; fav++) {
 				agents.get(k % Preference.agentNum).articleGenOwnContext(simulateTime,fav);
@@ -104,10 +104,9 @@ public class ExV4 {
 		//1000回のお見合いで488件の（同じコンテクストについて、agentどうしで共通するHashが追加されました）
 		// 数字でみると488/50000
 		//この記事では新しく生成されないので記事は500件ていど
-		
-		//20 simtimeにいちど　、Agentは輪番で記事を生成する　25x20、500simtimeに 
+		//20 simtimeにいちど　、Agentは輪番で記事を生成する　25x20、500simtimeにすべてのagentがひとつづつ記事を生成する 
 
-
+		/*
 		try {
 			ObjectOutputStream objOutStream = 
 					new ObjectOutputStream(
@@ -122,9 +121,42 @@ public class ExV4 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 
 
-		System.out.println("エージェント保存しましま");
+		System.out.println("エージェント保存しましません");
+		
+		
+		//1simtime 1 meet
+		 int genCount = 0; 
+		 for (int k = 0 ; k < 1000 ; k++ ) {
+			 
+			 System.out.print("");
+			//1simtime 1 meet. 1 random match and 1 context match
+			 pair = util.ramdomMatch(Preference.agentNum);
+			 util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]));
+			 //ルール ・　request する Agent がもつ　(ひとつの / すべての) Contextにつき 照会を行う
+			 Agent donner = agents.get(pair[0]);
+			 Agent recipient = agents.get(pair[1]);
+			 
+			
+			
+			//20simtimeに一回、genを行う。genするたびgencount +1.mod 25でエージェント輪番で記事を生成する。
+			 if (simulateTime % 20 == 0) {
+				 System.out.println("Agent_"+genCount % Preference.agentNum+" "+simulateTime);
+				 for (int fav = 0 ; fav < Preference.favNum; fav++) {
+					 agents.get(genCount % Preference.agentNum).articleGenOwnContext(simulateTime,fav);
+				}
+				 genCount ++;
+			 }
+			 
+			 simulateTime ++;
+			
+			
+		}
+		
+		
+		
 		
 		while(true) {
 			try{

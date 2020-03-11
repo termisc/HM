@@ -312,21 +312,22 @@ public class Agent implements Serializable{
 				articleList.add(0,s);
 
 				if (s.isTrapped()) {
-					System.out.println("trapped Article : " + s.getHashID() + ", from : " +  a.getName() + ", to : " + name );
+					System.out.println("trapped Article : " + s.getHashID() + ", from : " +  a.getName() + ", to : " + name +" " );
 				}
 
 				for (Context c : contexts) {
 					if (Math.abs( c.getAttribute()- s.getPotentialAttribute() ) < 5){
-						System.out.println(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute());
+						System.out.print(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
 						c.addHash(s.getHashID());
 						c.addCache(s);
 						c.deduplication();
 						exMiddle.add(0,s);
 						makeExchangeListLayers();
 					}
-				}           	
+				} 
 			}
-		}	
+		}
+		System.out.println("");
 	}
 
 	void exchangeBasedContext(Context context) {

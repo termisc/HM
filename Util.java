@@ -227,7 +227,6 @@ public class Util {
 		for (String arg :args) {
 			Matcher matcher_opt = pattern_opt.matcher(arg);
 			if (matcher_opt.matches() ) {
-				
 				switch (arg) {
 				case "-a" :
 					System.out.println("えーじぇんと");
@@ -240,13 +239,11 @@ public class Util {
 					saveAgents(agents,ds);
 					saveAgents(agents,"hoge.bin");			
 					break;
-					
 				case "-c" :
 					ArrayList<Context> contexts = new ArrayList<Context>();
 					for(int i=0 ; i< 256 ;i++) {
 						contexts.add(new Context(i));
 					}
-					
 					for(Agent a : agents ) {
 						for(Context co : a.getContexts()) {
 							int attr = co.getAttribute();
@@ -257,18 +254,13 @@ public class Util {
 							
 						}
 					}
-					
 					int i = 0;
 					for(Context c : contexts) {
 						System.out.println(i);;
 						i++;
 						c.showHashes();
 					}
-					
-					
 					saveCommonContexts(contexts,"fuga.bin");	
-					
-					//contexts[2].showHashes();
 					System.out.println("こんてくすと");
 					System.out.println("save contexts");
 					//attrの数だけcontect(save)を作成
