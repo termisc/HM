@@ -299,7 +299,7 @@ public class Agent implements Serializable{
 	}
 
 
-	void exchange_T4(Agent a){
+	void exchange_T4(Agent a,int simtime){
 		List<Article> downLoads = a.getExchangeList();
 		boolean isExchanged = false;
 		for (Article s : downLoads) {
@@ -318,7 +318,23 @@ public class Agent implements Serializable{
 
 				for (Context c : contexts) {
 					if (Math.abs( c.getAttribute()- s.getPotentialAttribute() ) < 5){
-						System.out.print(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
+						switch(Preference.t4LogMode) {
+						
+							case "name-only" :
+								//交換があったとき、一度だけ2者の名前を表示
+								if(!isExchanged) {
+									System.out.print(a.getName()+"-"+name);
+								}
+							break;
+							
+							default :
+								System.out.print(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
+							break;
+								
+								
+						}
+						//System.out.print(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
+						
 						c.addHash(s.getHashID());
 						c.addCache(s);
 						c.deduplication();

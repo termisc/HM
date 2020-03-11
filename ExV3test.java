@@ -78,7 +78,7 @@ public class ExV3test {
 			pair = util.ramdomMatch(Preference.agentNum);
 			//まず、最初の1000るーぷは他のagentから不作為に記事をDLする
 			//attributeに接続する記事を充実させる
-			util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]));
+			util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]),4649);
 			//excEOはそんなにつかわなくてもいいけどなんとなく関数にまとめてしまった機能
 			//片方向の交換を二度行う　それだけ
 		}

@@ -42,7 +42,7 @@ public class Util {
 			break;
 			
 		case "meet" :
-			session(s,agents);
+			session(s,agents,simtime);
 			break;
 			
 		case "exlist" :
@@ -167,9 +167,9 @@ public class Util {
 
 	}
 
-	void exchengeEachOther(Agent a,Agent b) {
-		a.exchange_T4(b);
-		b.exchange_T4(a);
+	void exchengeEachOther(Agent a,Agent b,int simtime) {
+		a.exchange_T4(b,simtime);
+		b.exchange_T4(a,simtime);
 	}
 
 	int[] ramdomMatch(int maxnum) {
@@ -323,10 +323,10 @@ public class Util {
 				int goal = Integer.parseInt(arg);
 				for(int i = 0 ; i < goal ; i++) {
 					int[] couple = ramdomMatch(25);
-					exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]));
+					exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]),simtime);
 				}
 				int[] couple = ramdomMatch(25);
-				exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]));
+				exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]),simtime);
 				System.out.println("OK");
 			}else {
 				System.out.println("Error");
@@ -367,7 +367,7 @@ public class Util {
 		return 0;		
 	}
 	
-	void session (String s, ArrayList<Agent> agents) {
+	void session (String s, ArrayList<Agent> agents,int simtime) {
 		// どうにかして、対象1、対象2、オプション、を分けます
 		//sex [options] object object . optionがあとにくることはないということにする
 		String[] args = s.split(" "); //冗長だがこれでいいのだ
@@ -413,7 +413,7 @@ public class Util {
 			}
 		}
 		if(error_flag == false && obj2_flag == true) {
-		  exchengeEachOther(agents.get(agent1),agents.get(agent2));
+		  exchengeEachOther(agents.get(agent1),agents.get(agent2),simtime);
 		}		
 	}
 

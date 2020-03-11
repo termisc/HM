@@ -22,7 +22,7 @@ public class ExV2Contexts {
 		Misc misc = new Misc();
 
 
-		int simulateTime = 0;
+		int simtime = 0;
 
 		String[] agentNames = {"Alice","Bob","Carol","Dave","Eve","Frank","Gennie","Hanna","Jack","Kim","Liam","Olivia","Quincy","Pat","Richard","Sally","Thomas","Ursula","Victor","Wendy","Xiao","Yang","Zora","Maria","John"};
 
@@ -50,18 +50,18 @@ public class ExV2Contexts {
 		//25人のエージェントをつくります
 		ArrayList<Agent> agents = new ArrayList<Agent>();
 		for (int i = 0 ; i < Preference.agentNum ; i++) {
-			simulateTime++;
+			simtime++;
 			agents.add(new Agent());
 			agents.get(i).setName(agentNames[i]);
 			for (int j = 0; j < 30 ; j++) {
-				agents.get(i).articleGenSimple(simulateTime);
+				agents.get(i).articleGenSimple(simtime);
 				//これでランダムで雑な記事がたくさんできる
 			}
 			agents.get(i).makeaExchangeListSimple();
 			agents.get(i).makeContextfromPotentialAttributes();	
 			agents.get(i).showAttr();
 		}
-		simulateTime++;
+		simtime++;
 
 		//エージェント間の遭遇確率をよみこみます
 		float[][] compatibility = new float[Preference.agentNum][Preference.agentNum];
@@ -83,7 +83,7 @@ public class ExV2Contexts {
 
 		System.out.println("Agentのさいしょの記事をいじります！　主にこの記事の動向をみます　attr=0, articlename = GOTCHA");
 		//Article(String _hashID,String _author,int _createdTime,int _attr,Boolean _isTrapped){
-		Article specialArticle = new Article("You_have_Got_Me",agents.get(0).getName(),simulateTime,0,true);
+		Article specialArticle = new Article("You_have_Got_Me",agents.get(0).getName(),simtime,0,true);
 		agents.get(0).getContexts().get(0).setAttr(0);
 		agents.get(0).getContexts().get(0).addHash(specialArticle.getHashID());
 		agents.get(0).addSpecial(specialArticle);
@@ -105,16 +105,16 @@ public class ExV2Contexts {
 		agents.get(0).dumpEx();
 
 		for (int i = 0 ; i < 100 ; i++) {
-			simulateTime ++;
+			simtime ++;
 
 			for (Agent a : agents) {
-				a.articleGenFav(simulateTime);			
+				a.articleGenFav(simtime);			
 				a.makeExchangeListLayers();
 			}
 
 			//System.out.println("Round" + i);
 			int match = Math.abs(rand.nextInt()) % (Preference.agentNum - 1) + 1; //1~24	
-			util.exchengeEachOther(agents.get(0), agents.get(match));
+			util.exchengeEachOther(agents.get(0), agents.get(match),simtime);
 		}
 
 		try {
@@ -133,7 +133,7 @@ public class ExV2Contexts {
 		}
 
 		System.out.println("エージェント保存したよ\n");
-		System.out.println("simttime:"+ simulateTime);
+		System.out.println("simttime:"+ simtime);
 		agents.get(0).dumpEx();
 
 	}

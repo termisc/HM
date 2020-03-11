@@ -19,6 +19,7 @@ public class Init {
 		Util util = new Util();		
 	    int[] pair = util.ramdomMatch(2);
 		Misc misc = new Misc();
+		int simtime = 0;
 
 		//25人のエージェントをつくります
 		ArrayList<Agent> agents = new ArrayList<Agent>();
@@ -31,6 +32,7 @@ public class Init {
 			agents.get(i).makeaExchangeListSimple();
 			agents.get(i).makeContextfromPotentialAttributes();	
 			agents.get(i).showAttr();
+			simtime++;
 		}
 		
 		//25*25の遭遇率の配列をつくります
@@ -57,7 +59,7 @@ public class Init {
 			if (compatibility[pair[0]][ pair[1]] > limen) {
 				//まず、最初の1000るーぷは他のagentから不作為に記事をDLする
 				//attributeに接続する記事を充実させる
-				util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]));
+				util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]),simtime);
 				heartCount ++;
 			}
 		}

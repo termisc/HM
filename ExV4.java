@@ -24,6 +24,8 @@ public class ExV4 {
 		Util util = new Util();		
 		int[] pair = util.ramdomMatch(2);
 		Misc misc = new Misc();
+		
+		int simtime = 10000;
 
 
 
@@ -68,7 +70,7 @@ public class ExV4 {
 		agents.get(0).showAttr();
 		//agents.get(1).showAttr();
 
-		int simulateTime = 0;
+		//int simulateTime = 0;
 		float limen = 0.1f;	//これ、うごきをみて流動すべきものです
 
 		Jaccard jacc = new Jaccard();
@@ -90,15 +92,15 @@ public class ExV4 {
 			//輪番で記事をつくります
 
 			for (int fav = 0 ; fav < Preference.favNum; fav++) {
-				agents.get(k % Preference.agentNum).articleGenOwnContext(simulateTime,fav);
+				agents.get(k % Preference.agentNum).articleGenOwnContext(simtime,fav);
 			}
 
 			pair = util.ramdomMatch(Preference.agentNum);
 			//まず、最初の1000るーぷは他のagentから不作為に記事をDLする
 			//attributeに接続する記事を充実させる
-			util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]));
+			util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]),simtime);
 
-			simulateTime ++;
+			simtime ++;
 		}
 
 		//1000回のお見合いで488件の（同じコンテクストについて、agentどうしで共通するHashが追加されました）
@@ -134,7 +136,7 @@ public class ExV4 {
 			 System.out.print("");
 			//1simtime 1 meet. 1 random match and 1 context match
 			 pair = util.ramdomMatch(Preference.agentNum);
-			 util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]));
+			 util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]),simtime);
 			 //ルール ・　request する Agent がもつ　(ひとつの / すべての) Contextにつき 照会を行う
 			 Agent donner = agents.get(pair[0]);
 			 Agent recipient = agents.get(pair[1]);
@@ -142,15 +144,15 @@ public class ExV4 {
 			
 			
 			//20simtimeに一回、genを行う。genするたびgencount +1.mod 25でエージェント輪番で記事を生成する。
-			 if (simulateTime % 20 == 0) {
-				 System.out.println("Agent_"+genCount % Preference.agentNum+" "+simulateTime);
+			 if (simtime % 20 == 0) {
+				 System.out.println("Agent_"+genCount % Preference.agentNum+" "+simtime);
 				 for (int fav = 0 ; fav < Preference.favNum; fav++) {
-					 agents.get(genCount % Preference.agentNum).articleGenOwnContext(simulateTime,fav);
+					 agents.get(genCount % Preference.agentNum).articleGenOwnContext(simtime,fav);
 				}
 				 genCount ++;
 			 }
 			 
-			 simulateTime ++;
+			 simtime ++;
 			
 			
 		}
@@ -164,8 +166,8 @@ public class ExV4 {
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				System.out.print("入力してください   ⇒  ");
 				String str = br.readLine();
-				util.Commands(str,agents,simulateTime);
-				simulateTime ++;
+				util.Commands(str,agents,simtime);
+				simtime ++;
 			}catch(IOException e){
 				System.out.println("Exception :" + e);     
 			}
