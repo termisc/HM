@@ -301,6 +301,7 @@ public class Agent implements Serializable{
 
 	void exchange_T4(Agent a){
 		List<Article> downLoads = a.getExchangeList();
+		boolean isExchanged = false;
 		for (Article s : downLoads) {
 			boolean collision = false;
 			for (Article j : articleList) {
@@ -312,7 +313,7 @@ public class Agent implements Serializable{
 				articleList.add(0,s);
 
 				if (s.isTrapped()) {
-					System.out.println("trapped Article : " + s.getHashID() + ", from : " +  a.getName() + ", to : " + name +" " );
+					System.out.print("trapped Article : " + s.getHashID() + ", from : " +  a.getName() + ", to : " + name +" " );
 				}
 
 				for (Context c : contexts) {
@@ -323,11 +324,14 @@ public class Agent implements Serializable{
 						c.deduplication();
 						exMiddle.add(0,s);
 						makeExchangeListLayers();
+						isExchanged = true;
 					}
 				} 
 			}
 		}
-		System.out.println("");
+		if (isExchanged) {
+			System.out.println("");
+		}
 	}
 
 	void exchangeBasedContext(Context context) {
