@@ -38,7 +38,7 @@ public class Init {
 		//25*25の遭遇率の配列をつくります
 		//25はPreference.agentnumから参照します
 		//確率はdouble,floatあるがfloatでよい	
-		//この配列は、各エージェント間の確率的な距離を表すMapとみてよい。
+		//この配列は、各エージェント間の確率的な距離を表すMapとみてよい。ー
 			
 		float[][] compatibility = new float[Preference.agentNum][Preference.agentNum];
 		for (int i = 0 ; i < Preference.agentNum ; i++) {
