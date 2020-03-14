@@ -323,12 +323,12 @@ public class Agent implements Serializable{
 							case "name-only" :
 								//交換があったとき、一度だけ2者の名前を表示
 								if(!isExchanged) {
-									System.out.print(a.getName()+"-"+name);
+									System.out.print(simtime + " " + a.getName()+"-"+name);
 								}
 							break;
 							
 							default :
-								System.out.print(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
+								System.out.print(simtime + " " + a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
 							break;
 								
 								
