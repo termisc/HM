@@ -80,7 +80,7 @@ public class Util {
 			
 		case "msc" :
 			System.out.println("Meet S Context");
-			sessionContext(s,agents);
+			sessionContext(s,agents,simtime);
 			break;
 			
 		case "cache" :
@@ -103,14 +103,10 @@ public class Util {
 		args = Arrays.copyOfRange(args, 1, args.length);
 		int agentnum = -1;
 		agentnum = Integer.parseInt(args[0]);
-		List<Context> contexts = agents.get(agentnum).getContexts();
-		
-		
+		List<Context> contexts = agents.get(agentnum).getContexts();			
 		for(Context c : contexts) {
 			c.showCaches();
-		}
-		
-		
+		}		
 	}
 
 	void showArticleList(String s, ArrayList<Agent> agents) {
@@ -143,6 +139,7 @@ public class Util {
 		}		
 	}
 
+	//これはAgentの中のクラスにしたほうがいい
 	List<Article> deduplication(List<Article> articleList) {
 		for(int i = 0;i < articleList.size();i++) {
 			for(int j = 0;j < articleList.size();j++) {
@@ -154,6 +151,7 @@ public class Util {
 		return articleList;
 	}
 
+	//これはAgentの中のクラスにしたほうがいい
 	void deduplicationContext(Context _context) {
 		ArrayList<String> hashes = _context.getHashes();
 		for(int i = 0; i < hashes.size(); i++) {
@@ -250,8 +248,7 @@ public class Util {
 							ArrayList<String> h1 = contexts.get(co.getAttribute()).getHashes();
 							ArrayList<String> h2 = co.getHashes();
 							h1.addAll(h2);
-							contexts.get(attr).setHashes(h1);
-							
+							contexts.get(attr).setHashes(h1);					
 						}
 					}
 					int i = 0;
@@ -335,7 +332,7 @@ public class Util {
 		
 	}
 	
-	int sessionContext(String s,ArrayList<Agent> agents ) {
+	int sessionContext(String s,ArrayList<Agent> agents ,int simtime) {
 		//(1)要求エの番号
 		//(2)要求エが渡すコンテクストの番号
 		//(3)供給エの番号
@@ -358,7 +355,7 @@ public class Util {
 			Agent donner = agents.get(agent1);
 			Agent recipient = agents.get(agent2);
 			Context c = recipient.getContexts().get(context);
-			donner.exchangeBasedContext(recipient.getContexts().get(context));
+			donner.exchangeBasedContext(recipient.getContexts().get(context),simtime);
 		}
 		catch(IndexOutOfBoundsException exception) {
 		    //handleTheExceptionSomehow(exception);

@@ -141,20 +141,24 @@ public class ExV4 {
 			 Agent donner = agents.get(pair[0]);
 			 Agent recipient = agents.get(pair[1]);
 			 
-			
-			
-			//20simtimeに一回、genを行う。genするたびgencount +1.mod 25でエージェント輪番で記事を生成する。
+			 for(Context c : donner.getContexts()) {
+				 	//donner.exchangeBasedContext(c,simtime);
+					//System.out.print( c.showHashes() + ", ");
+					//System.out.print( c.getAttribute() + ", ");
+					//System.out.println("□□□□□□□□" );
+					//c.showHashes();
+			}
+			 			
+			 //20simtimeに一回、genを行う。genするたびgencount +1.mod エージェント数でエージェント輪番で記事を生成する。
 			 if (simtime % 20 == 0) {
-				 System.out.println("Agent_"+genCount % Preference.agentNum+" "+simtime);
+				 Agent a = agents.get(genCount % Preference.agentNum);
+				 System.out.println(simtime+ " Agent_"+ genCount % Preference.agentNum + " " + a.getName() + " Gen Article" );
 				 for (int fav = 0 ; fav < Preference.favNum; fav++) {
-					 agents.get(genCount % Preference.agentNum).articleGenOwnContext(simtime,fav);
+					 a.articleGenOwnContext(simtime,fav);
 				}
 				 genCount ++;
-			 }
-			 
+			 } 
 			 simtime ++;
-			
-			
 		}
 		
 		

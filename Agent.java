@@ -174,9 +174,7 @@ public class Agent implements Serializable{
 
 	}
 
-	void exchangeByContext(int simtime) {
 
-	}
 
 
 	void addSpecial(Article a) {
@@ -311,11 +309,9 @@ public class Agent implements Serializable{
 			}
 			if (collision == false) {
 				articleList.add(0,s);
-
 				if (s.isTrapped()) {
 					System.out.print("trapped Article : " + s.getHashID() + ", from : " +  a.getName() + ", to : " + name +" " );
 				}
-
 				for (Context c : contexts) {
 					if (Math.abs( c.getAttribute()- s.getPotentialAttribute() ) < 5){
 						switch(Preference.t4LogMode) {
@@ -329,12 +325,9 @@ public class Agent implements Serializable{
 							
 							default :
 								System.out.print(simtime + " " + a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
-							break;
-								
-								
+							break;		
 						}
 						//System.out.print(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
-						
 						c.addHash(s.getHashID());
 						c.addCache(s);
 						c.deduplication();
@@ -350,11 +343,12 @@ public class Agent implements Serializable{
 		}
 	}
 
-	void exchangeBasedContext(Context context) {
+	void exchangeBasedContext(Context context,int simtime) {
 		//1.相手からContextをもらう
 		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
 		//類似度の閾値を決めて、閾値が一定以上のものでもよいかもしれない
 		//contextのjaccard係数が高ければ、(jaccard > 0.2) で、ContextのCacheから新着5件 (0.2はPreferencesから読むようにしよう)
+		//現在使用しｒてる 202003
 
 		int before = context.caches.size();
 		int[] points = new int[articleList.size()]; 
