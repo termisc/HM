@@ -142,7 +142,7 @@ public class ExV4 {
 			 Agent recipient = agents.get(pair[1]);
 			 
 			 for(Context c : donner.getContexts()) {
-				 	//donner.exchangeBasedContext(c,simtime);
+				 	donner.exchangeBasedContext(c,simtime);
 					//System.out.print( c.showHashes() + ", ");
 					//System.out.print( c.getAttribute() + ", ");
 					//System.out.println("□□□□□□□□" );

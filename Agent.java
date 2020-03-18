@@ -356,18 +356,21 @@ public class Agent implements Serializable{
 
 		Jaccard jacc = new Jaccard();
 		for(Context c : contexts) {
-			if ( jacc.apply(c.getHashes(), context.getHashes()) > 0.2 ) {
-				System.out.println("☺️"+ c.caches.size() + " caches will send");
+			if ( jacc.apply(c.getHashes(), context.getHashes()) > 0.4 ) {
+				System.out.println("  "+simtime +" caches send from context");
 				//contexのキャッシュ上位5件を私ます。
 				int amountOfCache = c.caches.size();
 				if (amountOfCache < 5) {
 					//すべてのcontext
 					context.caches.addAll(c.caches);
+				}else {
+					//cacheが五件以下ならcacheのすべて。cacheが五件以上なら最新5件を渡します。
+					//最新5件
+					List<Article> newer = c.caches.subList(c.caches.size()-5,c.caches.size()-1);
+					context.caches.addAll(newer);
 				}
-				//cacheが五件以下ならcacheのすべて。cacheが五件以上なら最新5件を渡します。
-				//最新5件
-				List<Article> newer = c.caches.subList(c.caches.size()-5,c.caches.size()-1);
-				context.caches.addAll(newer);
+			}else{
+				System.out.print("☠");
 			}
 		}
 	}

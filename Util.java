@@ -79,7 +79,7 @@ public class Util {
 			break;
 			
 		case "msc" :
-			System.out.println("Meet S Context");
+			System.out.println("exchange by Context");
 			sessionContext(s,agents,simtime);
 			break;
 			
@@ -283,11 +283,20 @@ public class Util {
 		int agent = -1;
 		Pattern pattern_obj = Pattern.compile("[0-9]+");
 		Pattern pattern_opt = Pattern.compile("-.*");
+		
+		
+		
+		
 		for (String arg :args) {
 			Matcher matcher_obj = pattern_obj.matcher(arg);
 			if (matcher_obj.matches() ) {
 				agent = Integer.parseInt(arg);
-				agents.get(agent).showHashes();
+				try{
+					agents.get(agent).showHashes();		
+				}catch(IndexOutOfBoundsException exception) {
+				    //handleTheExceptionSomehow(exception);
+					System.out.println("Error: Index Out Of Bounds. Skip");
+				}				
 				System.out.println("OK");
 			}else {
 				System.out.println("error");

@@ -48,7 +48,7 @@ public class ExV3test {
 		try {
 			ObjectInputStream objInStream 
 			= new ObjectInputStream(
-					new FileInputStream("lib/map.bin"));
+					new FileInputStream("map.bin"));
 			compatibility = (float[][] ) objInStream.readObject();
 
 		} catch (FileNotFoundException e) {
