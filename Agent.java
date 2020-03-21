@@ -299,7 +299,7 @@ public class Agent implements Serializable{
 
 	void exchange_T4(Agent a,int simtime){
 		List<Article> downLoads = a.getExchangeList();
-		boolean isExchanged = false;
+		boolean isExchanged = false;//そのセッションで交換があったかどうか。ログに記入するためのフラグです。
 		for (Article s : downLoads) {
 			boolean collision = false;
 			for (Article j : articleList) {
@@ -350,27 +350,28 @@ public class Agent implements Serializable{
 		//contextのjaccard係数が高ければ、(jaccard > 0.2) で、ContextのCacheから新着5件 (0.2はPreferencesから読むようにしよう)
 		//現在使用しｒてる 202003
 
-		int before = context.caches.size();
-		int[] points = new int[articleList.size()]; 
-		double max = 0.0;
-
 		Jaccard jacc = new Jaccard();
 		for(Context c : contexts) {
 			if ( jacc.apply(c.getHashes(), context.getHashes()) > 0.4 ) {
-				System.out.println("  "+simtime +" caches send from context");
+				System.out.print(simtime + " " +"-"+name);
+				System.out.println(" caches send from context");
 				//contexのキャッシュ上位5件を私ます。
 				int amountOfCache = c.caches.size();
 				if (amountOfCache < 5) {
 					//すべてのcontext
+					//for(Article a : c.caches) {System.out.print(a.getHashID());}		
 					context.caches.addAll(c.caches);
+					System.out.println("");
 				}else {
 					//cacheが五件以下ならcacheのすべて。cacheが五件以上なら最新5件を渡します。
 					//最新5件
 					List<Article> newer = c.caches.subList(c.caches.size()-5,c.caches.size()-1);
+					//for(Article a : newer) {System.out.print(a.getHashID());}	
 					context.caches.addAll(newer);
+					System.out.println("");
 				}
 			}else{
-				System.out.print("☠");
+				//System.out.print("☠");
 			}
 		}
 	}
@@ -382,28 +383,7 @@ public class Agent implements Serializable{
 		}
 	}
 
-	Article exchangeBasedContextA(Context context) {
-		//いまはつかってないです　2020/03/02
-		//1.相手からContextをもらう
-		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
-		// てもちのarticleの中から、もっとも適合度の高いものを選ぶ
-		//類似度の閾値を決めて、閾値が一定以上のものでもよいかもしれない
-		int[] points = new int[articleList.size()]; 
-		Jaccard jacc = new Jaccard();
-		double max = 0.0;
-		int ret = 0;
-		int i = 0;
-		for (Article a : articleList) {
-			//points[a.]
-			double c = jacc.apply(a.getHashList(), context.getHashes());
-			if (c > max) {
-				ret = i;	
-			}
-			i++;
-		}
-		System.out.println("EBCA result: "+max);
-		return articleList.get(ret);
-	}
+	
 
 
 

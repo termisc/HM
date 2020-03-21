@@ -98,6 +98,7 @@ public class ExV4 {
 			pair = util.ramdomMatch(Preference.agentNum);
 			//まず、最初の1000るーぷは他のagentから不作為に記事をDLする
 			//attributeに接続する記事を充実させる
+			System.out.print(simtime + " " + agents.get(pair[0]).getName()+"-"+agents.get(pair[1]).getName());
 			util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]),simtime);
 
 			simtime ++;
@@ -126,7 +127,6 @@ public class ExV4 {
 		*/
 
 
-		System.out.println("エージェント保存しましません");
 		
 		
 		//1simtime 1 meet
@@ -136,13 +136,17 @@ public class ExV4 {
 			 System.out.print("");
 			//1simtime 1 meet. 1 random match and 1 context match
 			 pair = util.ramdomMatch(Preference.agentNum);
-			 util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]),simtime);
+			
 			 //ルール ・　request する Agent がもつ　(ひとつの / すべての) Contextにつき 照会を行う
 			 Agent donner = agents.get(pair[0]);
 			 Agent recipient = agents.get(pair[1]);
+			
+			 System.out.println(simtime + " match: "+donner.getName()+"+"+recipient.getName());
 			 
-			 for(Context c : donner.getContexts()) {
-				 	donner.exchangeBasedContext(c,simtime);
+			 util.exchengeEachOther(donner, recipient,simtime);
+			 
+			 for(Context c : recipient.getContexts()) {
+				 donner.exchangeBasedContext(c,simtime);
 					//System.out.print( c.showHashes() + ", ");
 					//System.out.print( c.getAttribute() + ", ");
 					//System.out.println("□□□□□□□□" );

@@ -8,9 +8,10 @@ import java.io.Serializable;
 public class Article implements Serializable{
 	private int number;
 	private int createdTime;
-	private int transactionTime;
+	private int transportTime;
 	private String hashID;
 	private String author;
+	private String transporter;
 	private ArrayList<String> hashList;
 	private int potentialAttribute;
 	private List<String> ownerList;
@@ -86,6 +87,15 @@ public class Article implements Serializable{
 		hashList.forEach(s -> {
             System.out.println(s);
         });
+	}
+	
+	void WriteTransportTime(int _transportTime) {
+		transportTime = _transportTime;
+	}
+	
+	void WriteTransporter(String _transporter) {
+		transporter = _transporter;
+		
 	}
 	
 

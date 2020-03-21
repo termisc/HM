@@ -69,7 +69,7 @@ public class Context  implements Serializable{
 	
 	void showCaches(){
 		hashes.forEach(c -> {
-            System.out.println(c);
+            System.out.print(c);
         });
 	}
 	
