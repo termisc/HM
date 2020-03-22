@@ -297,34 +297,38 @@ public class Agent implements Serializable{
 	}
 
 
-	void exchange_T4(Agent a,int simtime){
-		List<Article> downLoads = a.getExchangeList();
+	void download_T4(Agent donner,int simtime){
+		List<Article> downLoads = donner.getExchangeList();
 		boolean isExchanged = false;//そのセッションで交換があったかどうか。ログに記入するためのフラグです。
 		for (Article s : downLoads) {
 			boolean collision = false;
 			for (Article j : articleList) {
 				if (j.getHashID().equals(s.getHashID() )) {
 					collision = true;
+					//すでに存在する記事は無視
 				}
 			}
 			if (collision == false) {
+				//ここでArticleの転送情報を更新する。
+				s.WriteTransportTime(simtime);
+				//s.WriteTransporter(name);
+				
 				articleList.add(0,s);
 				if (s.isTrapped()) {
-					System.out.print("trapped Article : " + s.getHashID() + ", from : " +  a.getName() + ", to : " + name +" " );
+					System.out.print("trapped Article : " + s.getHashID() + ", from : " +  donner.getName() + ", to : " + name +" " );
 				}
 				for (Context c : contexts) {
 					if (Math.abs( c.getAttribute()- s.getPotentialAttribute() ) < 5){
 						switch(Preference.t4LogMode) {
-						
 							case "name-only" :
 								//交換があったとき、一度だけ2者の名前を表示
 								if(!isExchanged) {
-									System.out.print(simtime + " " + a.getName()+"-"+name);
+									System.out.print(simtime + " " + donner.getName()+"-"+name);
 								}
 							break;
 							
 							default :
-								System.out.print(simtime + " " + a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
+								System.out.print(simtime + " " + donner.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
 							break;		
 						}
 						//System.out.print(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
@@ -343,7 +347,7 @@ public class Agent implements Serializable{
 		}
 	}
 
-	void exchangeBasedContext(Context context,int simtime) {
+	void downloadBasedContext(Agent donner, Context context,int simtime) {
 		//1.相手からContextをもらう
 		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
 		//類似度の閾値を決めて、閾値が一定以上のものでもよいかもしれない
@@ -353,20 +357,29 @@ public class Agent implements Serializable{
 		Jaccard jacc = new Jaccard();
 		for(Context c : contexts) {
 			if ( jacc.apply(c.getHashes(), context.getHashes()) > 0.4 ) {
-				System.out.print(simtime + " " +"-"+name);
-				System.out.println(" caches send from context");
+				System.out.print(simtime + " " +name);
+				System.out.println(" send caches from context ");
+				//contextのcacheを上書きします
+				for(Article a : c.caches) {
+					a.WriteTransportTime(simtime);
+					//a.WriteTransporter(name);
+				}
+				
+				
+				
+				
 				//contexのキャッシュ上位5件を私ます。
 				int amountOfCache = c.caches.size();
 				if (amountOfCache < 5) {
 					//すべてのcontext
-					//for(Article a : c.caches) {System.out.print(a.getHashID());}		
+					for(Article a : c.caches) {System.out.print(a.getHashID());}		
 					context.caches.addAll(c.caches);
 					System.out.println("");
 				}else {
 					//cacheが五件以下ならcacheのすべて。cacheが五件以上なら最新5件を渡します。
 					//最新5件
 					List<Article> newer = c.caches.subList(c.caches.size()-5,c.caches.size()-1);
-					//for(Article a : newer) {System.out.print(a.getHashID());}	
+					for(Article a : newer) {System.out.print(a.getHashID());}	
 					context.caches.addAll(newer);
 					System.out.println("");
 				}

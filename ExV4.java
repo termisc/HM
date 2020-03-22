@@ -145,8 +145,8 @@ public class ExV4 {
 			 
 			 util.exchengeEachOther(donner, recipient,simtime);
 			 
-			 for(Context c : recipient.getContexts()) {
-				 donner.exchangeBasedContext(c,simtime);
+			 for(Context c : donner.getContexts()) {
+				 recipient.downloadBasedContext(donner,c,simtime);
 					//System.out.print( c.showHashes() + ", ");
 					//System.out.print( c.getAttribute() + ", ");
 					//System.out.println("□□□□□□□□" );

@@ -166,8 +166,8 @@ public class Util {
 	}
 
 	void exchengeEachOther(Agent a,Agent b,int simtime) {
-		a.exchange_T4(b,simtime);
-		b.exchange_T4(a,simtime);
+		a.download_T4(b,simtime);
+		b.download_T4(a,simtime);
 	}
 
 	int[] ramdomMatch(int maxnum) {
@@ -351,20 +351,20 @@ public class Util {
 		//validationしません　いそがしいから
 		int agent1 = -1;
 		int agent2 = -1;
-		int context = -1;
+		int contextNum = -1;
 		System.out.println(args.length);
 		if ( args.length != 3) {
 			System.out.println("parse error, usage : smc int(Agent request) int(Agent reply) int(context) ");
 			return 1;
 		}
 		agent1 = Integer.parseInt(args[0]);
-		context = Integer.parseInt(args[1]);
 		agent2 = Integer.parseInt(args[2]);
+		contextNum = Integer.parseInt(args[1]);
 		try {
-			Agent donner = agents.get(agent1);
-			Agent recipient = agents.get(agent2);
-			Context c = recipient.getContexts().get(context);
-			donner.exchangeBasedContext(recipient.getContexts().get(context),simtime);
+			Agent recipient = agents.get(agent1);
+			Agent donner = agents.get(agent2);
+			Context c = donner.getContexts().get(contextNum);
+			recipient.downloadBasedContext(donner,c,simtime);
 		}
 		catch(IndexOutOfBoundsException exception) {
 		    //handleTheExceptionSomehow(exception);
