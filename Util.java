@@ -320,26 +320,7 @@ public class Util {
 	}
 		
 	
-	void train (String s,int simtime,ArrayList<Agent> agents) {
-		String[] args = s.split(" "); //冗長だがこれでいいのだ
-		Pattern pattern_obj = Pattern.compile("[0-9]+");
-		for (String arg :args) {
-			Matcher matcher_obj = pattern_obj.matcher(arg);
-			if (matcher_obj.matches() ) {
-				int goal = Integer.parseInt(arg);
-				for(int i = 0 ; i < goal ; i++) {
-					int[] couple = ramdomMatch(25);
-					exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]),simtime);
-				}
-				int[] couple = ramdomMatch(25);
-				exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]),simtime);
-				System.out.println("OK");
-			}else {
-				System.out.println("Error");
-			}
-		}
-		
-	}
+
 	
 	void train (String s,int simtime,ArrayList<Agent> agents) {
 		String[] args = s.split(" "); //冗長だがこれでいいのだ

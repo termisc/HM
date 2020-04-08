@@ -165,7 +165,8 @@ public class ExV4 {
 			 simtime ++;
 		}
 		
-		
+	//20200408
+		 //1000回　exchange by context を行い、
 		
 		
 		while(true) {
