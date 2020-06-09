@@ -1,9 +1,13 @@
 package hashContextTest;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -78,12 +82,49 @@ public class ExV2Contexts {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		
+		//contextのlogを初期化します。
+		
+			//よくつかうんので
+		String hashLogTxtFileName = "hashhyst.dat" ;
+		/*
+		try {
+			ObjectOutputStream objOutStream = 
+					new ObjectOutputStream(new FileOutputStream(hashLogFileName));
+			objOutStream.writeObject(agents);
+			objOutStream.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("エージェント保存しましま");
+		*/
+		
+		//Logging section will be separate.. 2020/06/03
+		String contextLogTxTFileName = Preference.ContextCSVFileName;
+		try{
+			File file = new File("contHyst.txt");
+			FileWriter filewriter = new FileWriter(file);
+
+			filewriter.write("こんにちは");
+
+			filewriter.close();
+		}catch(IOException e){
+			System.out.println(e);
+		}
+
+		
+		
+		
 
 		//とりあえず、一人のAgentに注目して動かすよ
 
 		System.out.println("Agentのさいしょの記事をいじります！　主にこの記事の動向をみます　attr=0, articlename = GOTCHA");
 		//Article(String _hashID,String _author,int _createdTime,int _attr,Boolean _isTrapped){
-		Article specialArticle = new Article("You_have_Got_Me",agents.get(0).getName(),simtime,0,true);
+		Article specialArticle = new Article("XXXXXX",agents.get(0).getName(),simtime,0,true);
 		agents.get(0).getContexts().get(0).setAttr(0);
 		agents.get(0).getContexts().get(0).addHash(specialArticle.getHashID());
 		agents.get(0).addSpecial(specialArticle);
@@ -135,6 +176,20 @@ public class ExV2Contexts {
 		System.out.println("エージェント保存したよ\n");
 		System.out.println("simttime:"+ simtime);
 		agents.get(0).dumpEx();
+		
+		while(true) {
+			try{
+				//入力ストリームの生成
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				System.out.print("入力してください   ⇒  ");
+				String str = br.readLine();
+				simtime = util.Commands(str,agents,simtime);
+				simtime ++;
+				
+			}catch(IOException e){
+				System.out.println("Exception :" + e);     
+			}
+		}
 
 	}
 

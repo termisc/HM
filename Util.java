@@ -1,16 +1,19 @@
 package hashContextTest;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.regex.Pattern;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 //Utilみたいなクラスがふえてきたらパッケージわけます
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -65,7 +68,7 @@ public class Util {
 			
 		case "train" :
 			System.out.println("💪");
-			train(s,simtime,agents);
+			simtime = train(s,simtime,agents);
 			break;
 		
 		case "gen" :
@@ -81,6 +84,11 @@ public class Util {
 		case "msc" :
 			System.out.println("exchange by Context");
 			sessionContext(s,agents,simtime);
+			break;
+			
+		case "csv" :
+			System.out.println("make CSV");
+			makeCSV(s,simtime,agents);
 			break;
 			
 		case "cache" :
@@ -105,6 +113,7 @@ public class Util {
 		agentnum = Integer.parseInt(args[0]);
 		List<Context> contexts = agents.get(agentnum).getContexts();			
 		for(Context c : contexts) {
+			System.out.println(c.caches.size());
 			c.showCaches();
 		}		
 	}
@@ -130,8 +139,15 @@ public class Util {
 	void showExList(String s, ArrayList<Agent> agents) {
 		String[] args = s.split(" "); 
 		args = Arrays.copyOfRange(args, 1, args.length);
+		System.out.println(args.length);
+		
 		int agentnum = -1;
-		agentnum = Integer.parseInt(args[0]);
+		try{
+			agentnum = Integer.parseInt(args[0]);
+		}catch(IndexOutOfBoundsException exception) {
+			System.out.println("IndexOutOfBoundsException");
+		}	
+		
 		try{
 			agents.get(agentnum).dumpEx();
 		}catch(IndexOutOfBoundsException exception) {
@@ -153,7 +169,7 @@ public class Util {
 
 	//これはAgentの中のクラスにしたほうがいい
 	void deduplicationContext(Context _context) {
-		ArrayList<String> hashes = _context.getHashes();
+		LinkedList<String> hashes = _context.getHashes();
 		for(int i = 0; i < hashes.size(); i++) {
 			for(int j = 0; j < hashes.size(); j++) {
 				if ( i != j && hashes.get(i).equals(hashes.get(j)) ){
@@ -162,7 +178,6 @@ public class Util {
 			}
 			_context.setHashes(hashes);
 		}
-
 	}
 
 	void exchengeEachOther(Agent a,Agent b,int simtime) {
@@ -245,8 +260,8 @@ public class Util {
 					for(Agent a : agents ) {
 						for(Context co : a.getContexts()) {
 							int attr = co.getAttribute();
-							ArrayList<String> h1 = contexts.get(co.getAttribute()).getHashes();
-							ArrayList<String> h2 = co.getHashes();
+							LinkedList<String> h1 = contexts.get(co.getAttribute()).getHashes();
+							LinkedList<String> h2 = co.getHashes();
 							h1.addAll(h2);
 							contexts.get(attr).setHashes(h1);					
 						}
@@ -284,9 +299,6 @@ public class Util {
 		Pattern pattern_obj = Pattern.compile("[0-9]+");
 		Pattern pattern_opt = Pattern.compile("-.*");
 		
-		
-		
-		
 		for (String arg :args) {
 			Matcher matcher_obj = pattern_obj.matcher(arg);
 			if (matcher_obj.matches() ) {
@@ -318,11 +330,33 @@ public class Util {
 			}
 		}
 	}
-		
 	
+		
+	void makeCSV(String s,int simtime,ArrayList<Agent> agents) {		
+		String csv = "";
+		for ( Agent a : agents) {
+			csv += simtime+","+a.getName()+",\n";
+			List<Context> contexts = a.getContexts();
+			for(Context c : contexts) {
+				csv += c.getHashesForLog();
+			}
+			csv+="\n";
+		}
+		System.out.println(csv);
+		
+		File file = new File(Preference.ContextCSVFileName);
+		try {
+			FileWriter filewriter = new FileWriter(file, true);
+			filewriter.write(csv);
+			filewriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	
-	void train (String s,int simtime,ArrayList<Agent> agents) {
+	int train (String s,int simtime,ArrayList<Agent> agents) {
 		String[] args = s.split(" "); //冗長だがこれでいいのだ
 		Pattern pattern_obj = Pattern.compile("[0-9]+");
 		for (String arg :args) {
@@ -332,16 +366,43 @@ public class Util {
 				for(int i = 0 ; i < goal ; i++) {
 					int[] couple = ramdomMatch(25);
 					exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]),simtime);
+					simtime ++;
 				}
 				int[] couple = ramdomMatch(25);
 				exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]),simtime);
 				System.out.println("OK");
+				simtime ++;
 			}else {
 				System.out.println("Error");
 			}
 		}
-		
+		return simtime;
 	}
+	
+	int trainmsc (String s,int simtime,ArrayList<Agent> agents) {
+		String[] args = s.split(" "); //冗長だがこれでいいのだ
+		Pattern pattern_obj = Pattern.compile("[0-9]+");
+		for (String arg :args) {
+			Matcher matcher_obj = pattern_obj.matcher(arg);
+			if (matcher_obj.matches() ) {
+				int goal = Integer.parseInt(arg);
+				for(int i = 0 ; i < goal ; i++) {
+					int[] couple = ramdomMatch(25);
+					exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]),simtime);
+					simtime ++;
+				}
+				int[] couple = ramdomMatch(25);
+				exchengeEachOther(agents.get(couple[0]),agents.get(couple[1]),simtime);
+				System.out.println("OK");
+				simtime ++;
+			}else {
+				System.out.println("Error");
+			}
+		}
+		return simtime;
+	}
+	
+	
 	
 	int sessionContext(String s,ArrayList<Agent> agents ,int simtime) {
 		//(1)要求エの番号
@@ -366,11 +427,11 @@ public class Util {
 			Agent recipient = agents.get(agent1);
 			Agent donner = agents.get(agent2);
 			Context c = donner.getContexts().get(contextNum);
-			recipient.downloadBasedContext(donner,c,simtime);
+			recipient.giveArticlefromContext(donner,c,simtime);
 		}
 		catch(IndexOutOfBoundsException exception) {
 		    //handleTheExceptionSomehow(exception);
-			System.out.println("error");
+			System.out.println("indexerror");
 		}
 		return 0;		
 	}

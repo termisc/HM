@@ -176,7 +176,8 @@ public class Agent implements Serializable{
 
 
 
-
+    //contextによらず優先されるべきメッセージが存在するとして、その過程をシミュレーションするためのもの
+	//緊急配信みたいなものを手動で拡散するものと考えていい
 	void addSpecial(Article a) {
 		articleList.add(a);		
 		exUpper.add(a);		
@@ -209,6 +210,20 @@ public class Agent implements Serializable{
 		for(Context c : contexts) {
 			//System.out.print( c.showHashes() + ", ");
 			System.out.print( c.getAttribute() + ", ");
+			System.out.print( c.hashes.size());
+			System.out.println("□□□□□□□□" );
+			c.showHashes();
+		}
+		System.out.print("},\n");
+	}
+	
+	void showHashesCSV(){
+		//余裕があればjson形式で吐く いまではない
+		System.out.print("\"attr\" : {");
+		System.out.println("■□□□■□□□■□□□■□□□■□□□■□□□" );
+		for(Context c : contexts) {
+			System.out.print( c.getAttribute() + ", ");
+			
 			System.out.println("□□□□□□□□" );
 			c.showHashes();
 		}
@@ -334,7 +349,7 @@ public class Agent implements Serializable{
 						//System.out.print(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
 						c.addHash(s.getHashID());
 						c.addCache(s);
-						c.deduplication();
+						//c.deduplication();
 						exMiddle.add(0,s);
 						makeExchangeListLayers();
 						isExchanged = true;
@@ -347,42 +362,61 @@ public class Agent implements Serializable{
 		}
 	}
 
-	void downloadBasedContext(Agent donner, Context context,int simtime) {
+	void giveArticlefromContext(Agent recepient, Context externalContext,int simtime) {
 		//1.相手からContextをもらう
 		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
 		//類似度の閾値を決めて、閾値が一定以上のものでもよいかもしれない
 		//contextのjaccard係数が高ければ、(jaccard > 0.2) で、ContextのCacheから新着5件 (0.2はPreferencesから読むようにしよう)
 		//現在使用しｒてる 202003
+		//相手方にデータを無理やりわたしているような嫌さがあるので向きを逆にしたいが。。。
 
 		Jaccard jacc = new Jaccard();
-		for(Context c : contexts) {
-			if ( jacc.apply(c.getHashes(), context.getHashes()) > 0.4 ) {
+		for(Context myContext : contexts) {
+			if ( jacc.apply(myContext.getHashes(), externalContext.getHashes()) > 0.4 ) {
 				System.out.print(simtime + " " +name);
 				System.out.println(" send caches from context ");
 				//contextのcacheを上書きします
-				for(Article a : c.caches) {
+				for(Article a : myContext.caches) {
 					a.WriteTransportTime(simtime);
-					//a.WriteTransporter(name);
+					
 				}
 				
-				
-				
-				
+				//ここで、hashesの類似度が高いものをcashに追加する？
 				//contexのキャッシュ上位5件を私ます。
-				int amountOfCache = c.caches.size();
+				//これは、交換後に別な関数うとして行うのがいいい
+				//今回はCashもHashにたされます				
+				
+				int amountOfCache = myContext.caches.size();
 				if (amountOfCache < 5) {
-					//すべてのcontext
-					for(Article a : c.caches) {System.out.print(a.getHashID());}		
-					context.caches.addAll(c.caches);
+					for(Article a : myContext.caches) {System.out.print(a.getHashID());}
+					//hashを追加
+					for(Article a : myContext.caches) {externalContext.hashes.add(a.getHashID());}	
+					//cacheを追加
+					externalContext.caches.addAll(myContext.caches);
 					System.out.println("");
 				}else {
 					//cacheが五件以下ならcacheのすべて。cacheが五件以上なら最新5件を渡します。
 					//最新5件
-					List<Article> newer = c.caches.subList(c.caches.size()-5,c.caches.size()-1);
-					for(Article a : newer) {System.out.print(a.getHashID());}	
-					context.caches.addAll(newer);
+					List<Article> newer = myContext.caches.subList(myContext.caches.size()-5,myContext.caches.size()-1);
+					for(Article a : newer) {System.out.print(a.getHashID());}
+					//hashを追加
+					for(Article a : newer) {externalContext.hashes.add(a.getHashID());}	
+					//cacheを追加
+					externalContext.caches.addAll(newer);
 					System.out.println("");
 				}
+				//cashが規定のサイズを越えた場合は消します
+				while(externalContext.caches.size() > Preference.cacheSize) {
+					externalContext.caches.remove();
+				}
+				//hashが規定のサイズを越えた場合は消します
+				while(externalContext.hashes.size() > Preference.contextSize) {
+					System.out.println("EQO💢");
+					externalContext.hashes.remove();
+				}
+				
+				
+				
 			}else{
 				//System.out.print("☠");
 			}
@@ -395,6 +429,23 @@ public class Agent implements Serializable{
 			c.showCaches();
 		}
 	}
+	
+	void showCSV() {
+		for(Context c : contexts) {
+			c.showCacheCSV();			
+		}
+	}
+	
+	String getCSV() {
+		String csv ="";
+		for(Context c : contexts) {
+			csv = csv + c.getHashesForLog();
+			//c.showCacheCSV();			
+		}
+		return csv;
+	}
+	
+	
 
 	
 

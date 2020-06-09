@@ -2,6 +2,8 @@ package hashContextTest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class Context  implements Serializable{
@@ -17,25 +19,25 @@ public class Context  implements Serializable{
 	//記事とは別に自由に使えるかたちで存在する。
 	int attribute;
 	
-	ArrayList<String> hashes;
+	LinkedList<String> hashes;
 	//キリがないのでQueue,10こまで. たまったらSynonimsをもとに再構成する
 	
 	ArrayList<ArrayList> synonims;  //ArrayList<String> を保持してね。
 	
 	
-	ArrayList<Article> caches; // Article recommended by context.
+	LinkedList<Article> caches; // Article recommended by context.
 	
 	
 	Context(){
-	  hashes = new  ArrayList<String>();
+	  hashes = new  LinkedList<String>();
 	  synonims = new ArrayList<ArrayList>();
-	  caches = new ArrayList<Article>();
+	  caches = new LinkedList<Article>();
 	}
 	
 	Context(int _attribute){
-		  hashes = new  ArrayList<String>();
+		  hashes = new  LinkedList<String>();
 		  synonims = new ArrayList<ArrayList>();
-		  caches = new ArrayList<Article>();
+		  caches = new LinkedList<Article>();
 		  attribute = _attribute;
 		  
 	}
@@ -44,7 +46,7 @@ public class Context  implements Serializable{
 		return attribute;
 	}
 	
-	ArrayList<String> getHashes() {
+	LinkedList<String> getHashes() {
 		return hashes;
 	}
 	
@@ -53,7 +55,7 @@ public class Context  implements Serializable{
 		hashes.add(hash);
 	}
 	
-	void setHashes(ArrayList<String> _hashes){
+	void setHashes(LinkedList<String> _hashes){
 		hashes = _hashes;
 	}
 	
@@ -68,12 +70,20 @@ public class Context  implements Serializable{
 	}
 	
 	void showCaches(){
-		hashes.forEach(c -> {
-            System.out.print(c);
+		caches.forEach(c -> {
+            System.out.println(c.getHashID());
         });
 	}
 	
-	String showHashesForLog(){
+	void showCacheCSV(){
+		hashes.forEach(c -> {
+            System.out.print(c);
+            System.out.print(",");
+        });
+	}
+	
+	
+	String getHashesForLog(){
 		String log = "";
 		for (String s : hashes) {
 			log += hashes + ",'";
@@ -100,6 +110,30 @@ public class Context  implements Serializable{
 				}
 			}
 		}
+	}
+	
+	void cacheDeduplication() {
+		for(int i = 0; i < caches.size(); i++) {
+			for(int j = 0; j < caches.size(); j++) {
+				if ( i != j && caches.get(i).getHashID().equals(caches.get(j).getHashID()) ){
+					caches.remove(j);
+				}
+			}
+		}
+	}
+	
+	LinkedList<Article> cacheSizeEqualize() {
+		if (caches.size() > Preference.cacheSize ) {
+			List<Article> sub = caches.subList(caches.size()-Preference.cacheSize,caches.size()-1);
+			//ArrayList<Article> cache = sub.newArrayList(sub);
+			caches = new LinkedList<Article>(sub);
+			System.out.println("EQORIZED");
+			//System.exit(0);
+		
+		}
+		
+		
+		return caches;
 	}
 
 	 void addCache(Article s) {

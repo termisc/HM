@@ -18,20 +18,16 @@ public class ExV4 {
 		System.out.println("Init.javaで生成されたAgent,mapを読み込み、Agent間で記事を交換\n　"
 				+ "各AgentがもつContextに、共のhashを持たせるのが目的です");
 
-
 		Random rand = new Random();
 		//int randomNum = rand.nextInt();
 		Util util = new Util();		
 		int[] pair = util.ramdomMatch(2);
-		Misc misc = new Misc();
-		
+		Misc misc = new Misc();		
 		int simtime = 10000;
-
 
 
 		//25人のエージェントを読みます
 		ArrayList<Agent> agents = new ArrayList<Agent>();
-
 		try {
 			ObjectInputStream objInStream 
 			= new ObjectInputStream(
@@ -45,7 +41,6 @@ public class ExV4 {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
 
 		//エージェント間の遭遇確率をよみこみます
 		float[][] compatibility = new float[Preference.agentNum][Preference.agentNum];
@@ -63,71 +58,26 @@ public class ExV4 {
 			e.printStackTrace();
 		}
 
-		//とりあえず、一人のAgentに注目して動かすよ
 
-
-
-		agents.get(0).showAttr();
-		//agents.get(1).showAttr();
-
-		//int simulateTime = 0;
 		float limen = 0.1f;	//これ、うごきをみて流動すべきものです
-
 		Jaccard jacc = new Jaccard();
-
-		//agents.get(0).dumpExMiddle();
-
-
 		System.out.println("randome match はじまるよ");
 		System.out.println("おわり");
-
-		//System.exit(0);
-
-
-
-
 
 		for (int k = 0 ; k < 0 ; k++ ) {
 			//記事を生成する
 			//輪番で記事をつくります
-
+			//exv2で記事の生成やってるのでここではやらんらしいなのでk<0、試行回数ゼロ
 			for (int fav = 0 ; fav < Preference.favNum; fav++) {
 				agents.get(k % Preference.agentNum).articleGenOwnContext(simtime,fav);
 			}
-
 			pair = util.ramdomMatch(Preference.agentNum);
-			//まず、最初の1000るーぷは他のagentから不作為に記事をDLする
-			//attributeに接続する記事を充実させる
+			//まず、最初の1000るーぷは他のagentから不作為に記事をDLする。attributeに接続する記事を充実させる。これが終わったらCOntextに基づく交換を行う。
 			System.out.print(simtime + " " + agents.get(pair[0]).getName()+"-"+agents.get(pair[1]).getName());
 			util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]),simtime);
-
 			simtime ++;
 		}
 
-		//1000回のお見合いで488件の（同じコンテクストについて、agentどうしで共通するHashが追加されました）
-		// 数字でみると488/50000
-		//この記事では新しく生成されないので記事は500件ていど
-		//20 simtimeにいちど　、Agentは輪番で記事を生成する　25x20、500simtimeにすべてのagentがひとつづつ記事を生成する 
-
-		/*
-		try {
-			ObjectOutputStream objOutStream = 
-					new ObjectOutputStream(
-							new FileOutputStream("a.bin"));
-			objOutStream.writeObject(agents);
-			objOutStream.close();
-
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-
-
-		
 		
 		//1simtime 1 meet
 		 int genCount = 0; 
@@ -142,15 +92,9 @@ public class ExV4 {
 			 Agent recipient = agents.get(pair[1]);
 			
 			 System.out.println(simtime + " match: "+donner.getName()+"+"+recipient.getName());
-			 
 			 util.exchengeEachOther(donner, recipient,simtime);
-			 
 			 for(Context c : donner.getContexts()) {
-				 recipient.downloadBasedContext(donner,c,simtime);
-					//System.out.print( c.showHashes() + ", ");
-					//System.out.print( c.getAttribute() + ", ");
-					//System.out.println("□□□□□□□□" );
-					//c.showHashes();
+				 recipient.giveArticlefromContext(donner,c,simtime);
 			}
 			 			
 			 //20simtimeに一回、genを行う。genするたびgencount +1.mod エージェント数でエージェント輪番で記事を生成する。
@@ -167,7 +111,6 @@ public class ExV4 {
 		
 	//20200408
 		 //1000回　exchange by context を行い、
-		
 		
 		while(true) {
 			try{
