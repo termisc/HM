@@ -70,6 +70,11 @@ public class Util {
 			System.out.println("💪");
 			simtime = train(s,simtime,agents);
 			break;
+			
+		case "trainmsc" :
+			System.out.println("💪");
+			simtime = trainmsc(s,simtime,agents);
+			break;
 		
 		case "gen" :
 			System.out.println("gen article from context");
@@ -334,16 +339,30 @@ public class Util {
 		
 	void makeCSV(String s,int simtime,ArrayList<Agent> agents) {		
 		String csv = "";
+		
+		/*
 		for ( Agent a : agents) {
-			csv += simtime+","+a.getName()+",\n";
+			csv += simtime+","+a.getName()+",";
 			List<Context> contexts = a.getContexts();
 			for(Context c : contexts) {
 				csv += c.getHashesForLog();
 			}
 			csv+="\n";
 		}
+		*/
+		Agent ai = agents.get(0);
+		csv += simtime+","+ai.getName()+",";
+		List<Context> contexts = ai.getContexts();
+		for(Context c : contexts) {
+			csv += c.getHashesForLog();
+			//csv+="\n";
+		}
+		csv+="\n";
+		
+		
 		System.out.println(csv);
 		
+		/*
 		File file = new File(Preference.ContextCSVFileName);
 		try {
 			FileWriter filewriter = new FileWriter(file, true);
@@ -353,6 +372,7 @@ public class Util {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	

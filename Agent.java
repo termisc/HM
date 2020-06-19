@@ -223,7 +223,6 @@ public class Agent implements Serializable{
 		System.out.println("■□□□■□□□■□□□■□□□■□□□■□□□" );
 		for(Context c : contexts) {
 			System.out.print( c.getAttribute() + ", ");
-			
 			System.out.println("□□□□□□□□" );
 			c.showHashes();
 		}
