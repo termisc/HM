@@ -117,6 +117,7 @@ public class ExV4 {
 				//入力ストリームの生成
 				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 				System.out.print("入力してください   ⇒  ");
+				//System.exit(1);
 				String str = br.readLine();
 				util.Commands(str,agents,simtime);
 				simtime ++;

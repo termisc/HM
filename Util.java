@@ -350,7 +350,7 @@ public class Util {
 		csv+="\n";
 		System.out.println(csv);
 		
-		/*
+		
 		File file = new File(Preference.ContextCSVFileName);
 		try {
 			FileWriter filewriter = new FileWriter(file, true);
@@ -360,7 +360,7 @@ public class Util {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		*/
+		
 	}
 
 	
