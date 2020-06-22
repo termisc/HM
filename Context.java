@@ -86,9 +86,8 @@ public class Context  implements Serializable{
 	String getHashesForLog(){
 		String log = "";
 		for (String s : hashes) {
-			log += hashes + "\n";
-		}
-		log += hashes + "星";
+			log += s + ",";
+		}		
 		return log;
 	}
 	

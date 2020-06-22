@@ -338,9 +338,7 @@ public class Util {
 	
 		
 	void makeCSV(String s,int simtime,ArrayList<Agent> agents) {		
-		String csv = "";
-		
-		/*
+		String csv = "";		
 		for ( Agent a : agents) {
 			csv += simtime+","+a.getName()+",";
 			List<Context> contexts = a.getContexts();
@@ -349,17 +347,7 @@ public class Util {
 			}
 			csv+="\n";
 		}
-		*/
-		Agent ai = agents.get(0);
-		csv += simtime+","+ai.getName()+",";
-		List<Context> contexts = ai.getContexts();
-		for(Context c : contexts) {
-			csv += c.getHashesForLog();
-			//csv+="\n";
-		}
 		csv+="\n";
-		
-		
 		System.out.println(csv);
 		
 		/*
