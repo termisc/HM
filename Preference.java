@@ -9,6 +9,6 @@ public class Preference {
 	public static int messageLevel = 5;
 	public static String t4LogMode = "name-only";
 	public static String Logmode = "console";
-	public static String ContextCSVFileName = "contHyst.txt";
+	public static String ContextCSVFileName = "contHyst.csv";
 
 }

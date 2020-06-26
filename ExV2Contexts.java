@@ -86,7 +86,7 @@ public class ExV2Contexts {
 		//contextのlogを初期化します。
 		
 			//よくつかうんので
-		String hashLogTxtFileName = "hashhyst.dat" ;
+		
 		/*
 		try {
 			ObjectOutputStream objOutStream = 
@@ -106,11 +106,8 @@ public class ExV2Contexts {
 		//Logging section will be separate.. 2020/06/03
 		String contextLogTxTFileName = Preference.ContextCSVFileName;
 		try{
-			File file = new File("contHyst.txt");
+			File file = new File("contHyst.csv");
 			FileWriter filewriter = new FileWriter(file);
-
-			filewriter.write("こんにちは");
-
 			filewriter.close();
 		}catch(IOException e){
 			System.out.println(e);

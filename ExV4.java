@@ -1,9 +1,11 @@
 package hashContextTest;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
@@ -24,6 +26,16 @@ public class ExV4 {
 		int[] pair = util.ramdomMatch(2);
 		Misc misc = new Misc();		
 		int simtime = 10000;
+		
+		//logfile initialise
+		String contextLogTxTFileName = Preference.ContextCSVFileName;
+		try{
+			File file = new File(contextLogTxTFileName);
+			FileWriter filewriter = new FileWriter(file);
+			filewriter.close();
+		}catch(IOException e){
+			System.out.println(e);
+		}
 
 
 		//25人のエージェントを読みます
@@ -109,8 +121,44 @@ public class ExV4 {
 			 simtime ++;
 		}
 		
-	//20200408
-		 //1000回　exchange by context を行い、
+		 //20200408
+		 //100回　exchange by context を行い、CSV出力　これを20回。　そのデータ
+		 for (int k = 0 ; k < 1000 ; k++ ) {
+			 System.out.print("");
+			//1simtime 1 meet. 1 random match and 1 context match
+			 pair = util.ramdomMatch(Preference.agentNum);
+			 //ルール ・　request する Agent がもつ　(ひとつの / すべての) Contextにつき 照会を行う
+			 Agent donner = agents.get(pair[0]);
+			 Agent recipient = agents.get(pair[1]);
+			 System.out.println(simtime + " match: "+donner.getName()+"+"+recipient.getName());
+			 util.exchengeEachOther(donner, recipient,simtime);
+			 for(Context c : donner.getContexts()) {
+				 recipient.giveArticlefromContext(donner,c,simtime);
+			}
+			 			
+			 //20simtimeに一回、genを行う。genするたびgencount +1.mod エージェント数でエージェント輪番で記事を生成する。
+			 if (simtime % 20 == 0) {
+				 Agent a = agents.get(genCount % Preference.agentNum);
+				 System.out.println(simtime+ " Agent_"+ genCount % Preference.agentNum + " " + a.getName() + " Gen Article" );
+				 for (int fav = 0 ; fav < Preference.favNum; fav++) {
+					 a.articleGenOwnContext(simtime,fav);
+				}
+				 genCount ++;
+			 }
+			 
+			 //100simtimeに一回、csv出力
+			 if (simtime % 100 == 0) {
+				 util.makeCSV("",simtime,agents);
+				 
+				 
+				 genCount ++;
+			 }
+			 
+			 simtime ++;
+		}
+
+		 
+		System.out.println("simやりました。HashHyst.csvを確認してください。さようなら");
 		
 		while(true) {
 			try{
