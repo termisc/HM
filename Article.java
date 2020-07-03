@@ -78,6 +78,14 @@ public class Article implements Serializable{
 		return isTrapped;
 	}
 	
+	void setTrap() {
+		isTrapped = true;
+	}
+	
+	void unSetTrap() {
+		isTrapped = false;
+	}
+	
 	void addHash(String _hash){
 		hashList.add(_hash);
 	}	

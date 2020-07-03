@@ -30,24 +30,6 @@ public class ExV2Contexts {
 
 		String[] agentNames = {"Alice","Bob","Carol","Dave","Eve","Frank","Gennie","Hanna","Jack","Kim","Liam","Maria","Nate","Olivia","Patric","Quincy","Richard","Sally","Thomas","Ursula","Victor","Wendy","Xiao","Yang","Zora","John"};
 
-/*
-			//Contextをよみこみます
-			ArrayList<Context> contexts = new ArrayList<Context>();
-			try {
-				ObjectInputStream objInStream 
-				= new ObjectInputStream(
-						new FileInputStream("fuga.bin"));
-				contexts = (ArrayList<Context> ) objInStream.readObject();
-
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-*/
-
 		//25人のエージェントをつくります
 		ArrayList<Agent> agents = new ArrayList<Agent>();
 		for (int i = 0 ; i < Preference.agentNum ; i++) {
@@ -82,11 +64,10 @@ public class ExV2Contexts {
 		
 		//contextのlogを初期化します。
 		//よくつかうんので
-		
 		//Logging section will be separate.. 2020/06/03
-		String contextLogTxTFileName = Preference.ContextCSVFileName;
+	
 		try{
-			File file = new File("contHyst.csv");
+			File file = new File(Preference.ContextCSVFileName);
 			FileWriter filewriter = new FileWriter(file);
 			filewriter.close();
 		}catch(IOException e){
@@ -95,12 +76,15 @@ public class ExV2Contexts {
 
 				
 		for(int i = 0; i < 25 ; i++) {
-			Article specialArticle = new Article("XX"+agents.get(i).getName(),agents.get(0).getName(),simtime,0,true);
+			Article specialArticle = new Article("XX"+agents.get(i).getName(),agents.get(i).getName(),simtime,0,true);
+			specialArticle.setTrap();
 			agents.get(i).getContexts().get(0).setAttr(i);
 			agents.get(i).getContexts().get(0).addHash(specialArticle.getHashID());
 			agents.get(i).addSpecial(specialArticle);
 			agents.get(i).makeExchangeListLayers();
 		}
+		
+		for(Agent x :agents ) {x.dumpEx();	System.out.println("");}
 
 		//ランダムでエージェントと遭遇
 		//記事を交換
@@ -108,26 +92,22 @@ public class ExV2Contexts {
 		//てきとうなタイミングで記事を作成
 		//はじめはふたりで
 
-		agents.get(0).showAttr();
-		agents.get(1).showAttr();
 		float limen = 0.2f;
 
 		//ひとりが各エージェントにランダムで訪問
 		//1ターンにつき各エージェントが記事一件作成＆交換リスト構成をリロード
 
-		agents.get(0).dumpEx();
 
 		for (int i = 0 ; i < 100 ; i++) {
 			simtime ++;
 
 			for (Agent a : agents) {
-				a.articleGenFav(simtime);			
 				a.makeExchangeListLayers();
 			}
 
 			//System.out.println("Round" + i);
-			int match = Math.abs(rand.nextInt()) % (Preference.agentNum - 1) + 1; //1~24	
-			util.exchengeEachOther(agents.get(0), agents.get(match),simtime);
+			//int match = Math.abs(rand.nextInt()) % (Preference.agentNum - 1) + 1; //1~24	
+			//util.exChangeBidirectional(agents.get(0), agents.get(match),simtime);
 		}
 
 		try {
@@ -147,7 +127,9 @@ public class ExV2Contexts {
 
 		System.out.println("エージェント保存したよ\n");
 		System.out.println("simttime:"+ simtime);
-		agents.get(0).dumpEx();
+		
+		System.out.println("☆☆☆☆☆☆");
+		for(Agent x :agents ) {x.dumpEx();	System.out.println("");}
 		
 		while(true) {
 			try{

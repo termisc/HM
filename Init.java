@@ -59,7 +59,7 @@ public class Init {
 			if (compatibility[pair[0]][ pair[1]] > limen) {
 				//まず、最初の1000るーぷは他のagentから不作為に記事をDLする
 				//attributeに接続する記事を充実させる
-				util.exchengeEachOther(agents.get(pair[1]), agents.get(pair[0]),simtime);
+				util.exChangeBidirectional(agents.get(pair[1]), agents.get(pair[0]),simtime);
 				heartCount ++;
 			}
 		}

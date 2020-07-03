@@ -96,7 +96,7 @@ public class ExchangeV2test {
 			
 			//System.out.println("Round" + i);
 			int match = Math.abs(rand.nextInt()) % (Preference.agentNum - 1) + 1; //1~24	
-			util.exchengeEachOther(agents.get(0), agents.get(match),simtime);
+			util.exChangeBidirectional(agents.get(0), agents.get(match),simtime);
 		}
 						
 		try {

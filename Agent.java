@@ -165,10 +165,9 @@ public class Agent implements Serializable{
 		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
 		Context c = this.contexts.get(fav);
 		Article a = new Article(result,name,simtime,c.getAttribute());
-		//System.out.println("gen article test " + result);
+		System.out.print("+");
 		articleList.add(0,a);		
 		exUpper.add(a);
-
 		contexts.get(fav).addHash(a.getHashID());
 		//contexts.get(fav).deduplication();//新造なので重複排除は必要なし
 
@@ -314,42 +313,36 @@ public class Agent implements Serializable{
 	void download_T4(Agent donner,int simtime){
 		List<Article> downLoads = donner.getExchangeList();
 		boolean isExchanged = false;//そのセッションで交換があったかどうか。ログに記入するためのフラグです。
-		for (Article s : downLoads) {
+		for (Article art : downLoads) {
 			boolean collision = false;
 			for (Article j : articleList) {
-				if (j.getHashID().equals(s.getHashID() )) {
+				if (j.getHashID().equals(art.getHashID() )) {
 					collision = true;
 					//すでに存在する記事は無視
 				}
 			}
 			if (collision == false) {
-				//ここでArticleの転送情報を更新する。
-				s.WriteTransportTime(simtime);
-				//s.WriteTransporter(name);
-				
-				articleList.add(0,s);
-				if (s.isTrapped()) {
-					System.out.print("trapped Article : " + s.getHashID() + ", from : " +  donner.getName() + ", to : " + name +" " );
-				}
+				art.WriteTransportTime(simtime);				
+				articleList.add(0,art);
+				//if (art.isTrapped()) {System.out.println(art.getHashID());}
 				for (Context c : contexts) {
-					if (Math.abs( c.getAttribute()- s.getPotentialAttribute() ) < 5){
+					if (Math.abs( c.getAttribute()- art.getPotentialAttribute() ) < 5){
 						switch(Preference.t4LogMode) {
 							case "name-only" :
 								//交換があったとき、一度だけ2者の名前を表示
 								if(!isExchanged) {
-									System.out.print(simtime + " " + donner.getName()+"-"+name);
+									System.out.println(simtime + " " + donner.getName()+"-"+name);
 								}
+							break;
+							case "none" :
 							break;
 							
 							default :
-								System.out.print(simtime + " " + donner.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
 							break;		
 						}
-						//System.out.print(a.getName()+"-"+c.getAttribute()+"❦"+name+"-"+s.getPotentialAttribute()+" ");
-						c.addHash(s.getHashID());
-						c.addCache(s);
-						//c.deduplication();
-						exMiddle.add(0,s);
+						c.addHash(art.getHashID());
+						c.addCache(art);
+						exMiddle.add(0,art);
 						makeExchangeListLayers();
 						isExchanged = true;
 					}
@@ -357,7 +350,7 @@ public class Agent implements Serializable{
 			}
 		}
 		if (isExchanged) {
-			System.out.println("");
+			System.out.print(".");
 		}
 	}
 
@@ -373,11 +366,10 @@ public class Agent implements Serializable{
 		for(Context myContext : contexts) {
 			if ( jacc.apply(myContext.getHashes(), externalContext.getHashes()) > 0.4 ) {
 				System.out.print(simtime + " " +name);
-				System.out.println(" send caches from context ");
+				System.out.println(" ☆");
 				//contextのcacheを上書きします
 				for(Article a : myContext.caches) {
 					a.WriteTransportTime(simtime);
-					
 				}
 				
 				//ここで、hashesの類似度が高いものをcashに追加する？
@@ -387,9 +379,13 @@ public class Agent implements Serializable{
 				
 				int amountOfCache = myContext.caches.size();
 				if (amountOfCache < 5) {
-					for(Article a : myContext.caches) {System.out.print(a.getHashID());}
+					for(Article a : myContext.caches) {
+						System.out.print("!");
+					}
 					//hashを追加
-					for(Article a : myContext.caches) {externalContext.hashes.add(a.getHashID());}	
+					for(Article a : myContext.caches) {
+						externalContext.hashes.add(a.getHashID());
+					}	
 					//cacheを追加
 					externalContext.caches.addAll(myContext.caches);
 					System.out.println("");
@@ -397,7 +393,9 @@ public class Agent implements Serializable{
 					//cacheが五件以下ならcacheのすべて。cacheが五件以上なら最新5件を渡します。
 					//最新5件
 					List<Article> newer = myContext.caches.subList(myContext.caches.size()-5,myContext.caches.size()-1);
-					for(Article a : newer) {System.out.print(a.getHashID());}
+					for(Article a : newer) {
+						System.out.print("!");
+					}
 					//hashを追加
 					for(Article a : newer) {externalContext.hashes.add(a.getHashID());}	
 					//cacheを追加
@@ -410,7 +408,7 @@ public class Agent implements Serializable{
 				}
 				//hashが規定のサイズを越えた場合は消します
 				while(externalContext.hashes.size() > Preference.contextSize) {
-					System.out.println("EQO💢");
+					System.out.print("💢");
 					externalContext.hashes.remove();
 				}
 				
