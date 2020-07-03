@@ -28,10 +28,9 @@ public class ExV2Contexts {
 
 		int simtime = 0;
 
-		String[] agentNames = {"Alice","Bob","Carol","Dave","Eve","Frank","Gennie","Hanna","Jack","Kim","Liam","Olivia","Quincy","Pat","Richard","Sally","Thomas","Ursula","Victor","Wendy","Xiao","Yang","Zora","Maria","John"};
+		String[] agentNames = {"Alice","Bob","Carol","Dave","Eve","Frank","Gennie","Hanna","Jack","Kim","Liam","Maria","Nate","Olivia","Patric","Quincy","Richard","Sally","Thomas","Ursula","Victor","Wendy","Xiao","Yang","Zora","John"};
 
-
-		if (false) {
+/*
 			//Contextをよみこみます
 			ArrayList<Context> contexts = new ArrayList<Context>();
 			try {
@@ -47,10 +46,8 @@ public class ExV2Contexts {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-		}
+*/
 
-
-		//Context、空要素けします
 		//25人のエージェントをつくります
 		ArrayList<Agent> agents = new ArrayList<Agent>();
 		for (int i = 0 ; i < Preference.agentNum ; i++) {
@@ -84,24 +81,7 @@ public class ExV2Contexts {
 		}
 		
 		//contextのlogを初期化します。
-		
-			//よくつかうんので
-		
-		/*
-		try {
-			ObjectOutputStream objOutStream = 
-					new ObjectOutputStream(new FileOutputStream(hashLogFileName));
-			objOutStream.writeObject(agents);
-			objOutStream.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("エージェント保存しましま");
-		*/
+		//よくつかうんので
 		
 		//Logging section will be separate.. 2020/06/03
 		String contextLogTxTFileName = Preference.ContextCSVFileName;
@@ -113,19 +93,14 @@ public class ExV2Contexts {
 			System.out.println(e);
 		}
 
-		
-		
-		
-
-		//とりあえず、一人のAgentに注目して動かすよ
-
-		System.out.println("Agentのさいしょの記事をいじります！　主にこの記事の動向をみます　attr=0, articlename = GOTCHA");
-		//Article(String _hashID,String _author,int _createdTime,int _attr,Boolean _isTrapped){
-		Article specialArticle = new Article("XXXXXX",agents.get(0).getName(),simtime,0,true);
-		agents.get(0).getContexts().get(0).setAttr(0);
-		agents.get(0).getContexts().get(0).addHash(specialArticle.getHashID());
-		agents.get(0).addSpecial(specialArticle);
-		agents.get(0).makeExchangeListLayers();
+				
+		for(int i = 0; i < 25 ; i++) {
+			Article specialArticle = new Article("XX"+agents.get(i).getName(),agents.get(0).getName(),simtime,0,true);
+			agents.get(i).getContexts().get(0).setAttr(i);
+			agents.get(i).getContexts().get(0).addHash(specialArticle.getHashID());
+			agents.get(i).addSpecial(specialArticle);
+			agents.get(i).makeExchangeListLayers();
+		}
 
 		//ランダムでエージェントと遭遇
 		//記事を交換

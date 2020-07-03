@@ -340,17 +340,17 @@ public class Util {
 	void makeCSV(String s,int simtime,ArrayList<Agent> agents) {		
 		String csv = "";		
 		for ( Agent a : agents) {
-			csv += simtime+","+a.getName()+",";
+			
 			List<Context> contexts = a.getContexts();
 			for(Context c : contexts) {
+				csv += simtime+","+a.getName()+","+c.getAttribute().toString()+",";
 				csv += c.getHashesForLog();
+				csv+="\n";
 			}
-			csv+="\n";
+			
 		}
 		csv+="\n";
 		System.out.println(csv);
-		
-		
 		File file = new File(Preference.ContextCSVFileName);
 		try {
 			FileWriter filewriter = new FileWriter(file, true);
@@ -502,14 +502,16 @@ public class Util {
 			System.out.println("parse error, usage : genac int(Agent)");
 			return 1;
 		}
+		if ( Integer.parseInt(args[0]) > Preference.agentNum || Integer.parseInt(args[0]) < 0 ) {
+			System.out.println("IndexOutOfBounds!");
+			return 1;
+		}
 		int agentNum = -1;
 		agentNum = Integer.parseInt(args[0]);
 		Agent a = agents.get(agentNum);
 		//pereferensys.favnumじゃなくてAgentのContextの配列長さを使え
 		for (int fav = 0 ; fav < Preference.favNum; fav++) {
 			a.articleGenOwnContext(simtime,fav);
-			//a.
-			
 		}
 		a.makeExchangeListLayers();
 		return 0;

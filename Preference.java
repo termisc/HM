@@ -10,5 +10,6 @@ public class Preference {
 	public static String t4LogMode = "name-only";
 	public static String Logmode = "console";
 	public static String ContextCSVFileName = "contHyst.csv";
-
+	public static String articleTraceLogFileName = "articleTraceLog.csv";
+	public static String trackListFileName = "searchingArticle.csv";
 }

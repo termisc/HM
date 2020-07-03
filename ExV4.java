@@ -21,7 +21,6 @@ public class ExV4 {
 				+ "各AgentがもつContextに、共のhashを持たせるのが目的です");
 
 		Random rand = new Random();
-		//int randomNum = rand.nextInt();
 		Util util = new Util();		
 		int[] pair = util.ramdomMatch(2);
 		Misc misc = new Misc();		
@@ -45,7 +44,6 @@ public class ExV4 {
 			= new ObjectInputStream(
 					new FileInputStream("agents.bin"));
 			agents = (ArrayList<Agent> ) objInStream.readObject();
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -61,7 +59,6 @@ public class ExV4 {
 			= new ObjectInputStream(
 					new FileInputStream("map.bin"));
 			compatibility = (float[][] ) objInStream.readObject();
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -69,7 +66,6 @@ public class ExV4 {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-
 
 		float limen = 0.1f;	//これ、うごきをみて流動すべきものです
 		Jaccard jacc = new Jaccard();
@@ -94,21 +90,17 @@ public class ExV4 {
 		//1simtime 1 meet
 		 int genCount = 0; 
 		 for (int k = 0 ; k < 1000 ; k++ ) {
-			 
 			 System.out.print("");
-			//1simtime 1 meet. 1 random match and 1 context match
+			//1simtime 1 meet. 1 random match and 1 context match　が目安
 			 pair = util.ramdomMatch(Preference.agentNum);
-			
-			 //ルール ・　request する Agent がもつ　(ひとつの / すべての) Contextにつき 照会を行う
+			 //ルール request する Agent がもつ　(ひとつの / すべての) Contextにつき 照会を行う
 			 Agent donner = agents.get(pair[0]);
 			 Agent recipient = agents.get(pair[1]);
-			
 			 System.out.println(simtime + " match: "+donner.getName()+"+"+recipient.getName());
 			 util.exchengeEachOther(donner, recipient,simtime);
 			 for(Context c : donner.getContexts()) {
 				 recipient.giveArticlefromContext(donner,c,simtime);
 			}
-			 			
 			 //20simtimeに一回、genを行う。genするたびgencount +1.mod エージェント数でエージェント輪番で記事を生成する。
 			 if (simtime % 20 == 0) {
 				 Agent a = agents.get(genCount % Preference.agentNum);
@@ -120,7 +112,7 @@ public class ExV4 {
 			 } 
 			 simtime ++;
 		}
-		
+		 
 		 //20200408
 		 //100回　exchange by context を行い、CSV出力　これを20回。　そのデータ
 		 for (int k = 0 ; k < 1000 ; k++ ) {
@@ -130,36 +122,29 @@ public class ExV4 {
 			 //ルール ・　request する Agent がもつ　(ひとつの / すべての) Contextにつき 照会を行う
 			 Agent donner = agents.get(pair[0]);
 			 Agent recipient = agents.get(pair[1]);
-			 System.out.println(simtime + " match: "+donner.getName()+"+"+recipient.getName());
+			 //System.out.println(simtime + " match: "+donner.getName()+"+"+recipient.getName());
 			 util.exchengeEachOther(donner, recipient,simtime);
 			 for(Context c : donner.getContexts()) {
 				 recipient.giveArticlefromContext(donner,c,simtime);
 			}
-			 			
 			 //20simtimeに一回、genを行う。genするたびgencount +1.mod エージェント数でエージェント輪番で記事を生成する。
 			 if (simtime % 20 == 0) {
 				 Agent a = agents.get(genCount % Preference.agentNum);
-				 System.out.println(simtime+ " Agent_"+ genCount % Preference.agentNum + " " + a.getName() + " Gen Article" );
+				 //System.out.println(simtime+ " Agent_"+ genCount % Preference.agentNum + " " + a.getName() + " Gen Article" );
 				 for (int fav = 0 ; fav < Preference.favNum; fav++) {
 					 a.articleGenOwnContext(simtime,fav);
 				}
 				 genCount ++;
 			 }
-			 
 			 //100simtimeに一回、csv出力
 			 if (simtime % 100 == 0) {
 				 util.makeCSV("",simtime,agents);
-				 
-				 
 				 genCount ++;
 			 }
-			 
 			 simtime ++;
 		}
-
 		 
-		System.out.println("simやりました。HashHyst.csvを確認してください。さようなら");
-		
+		System.out.println("simやりました。csvを確認してください。さようなら");
 		while(true) {
 			try{
 				//入力ストリームの生成
@@ -173,17 +158,5 @@ public class ExV4 {
 				System.out.println("Exception :" + e);     
 			}
 		}
-
-
-
-
-
-
-
-
-
-
-
 	}
-
 }
