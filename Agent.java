@@ -23,8 +23,6 @@ public class Agent implements Serializable{
 	//明示的な指示で優先的に流すにしても
 	//ログ取りで困ったらやるべきか？
 
-	private List<Integer> potentialAttributes_l;
-
 	private List<Article> articleList;
 	//ストックしている記事
 
@@ -43,11 +41,8 @@ public class Agent implements Serializable{
 
 	private List<Article> exUpper;
 	//自作記事
-
 	private List<Article> exMiddle;
 	//優先度が高い
-
-
 	private List<Article> exLower;
 	//もらった記事を新着
 	//upper:middle:bottom比　1:10:100くらい？
@@ -55,28 +50,21 @@ public class Agent implements Serializable{
 	int POTENCIAL = Preference.favNum; //5です
 
 	Agent(){
-		//int POTENCIAL = 5;
-		//POTENCIAL = Preference.favnum;
 		articleList =  new ArrayList<Article>();
 		exchangeList =  new ArrayList<Article>();
 		exUpper =  new ArrayList<Article>();
 		exMiddle =  new ArrayList<Article>();
 		exLower =  new ArrayList<Article>();
-
-
 		potentialAttributes = new int[POTENCIAL];
 		contexts = new ArrayList<Context>();
 		Random rand = new Random();
 		for(int i = 0; i < POTENCIAL ; i++ ) { contexts.add(new Context(Math.abs(rand.nextInt() % Preference.topicNum ))); }
-
 		for(int i = 0; i < POTENCIAL ;i++) {
 			potentialAttributes[i] = Math.abs(rand.nextInt() % Preference.topicNum );
 		}
-
 	}
 
 	void message(int commentLevel,String message) {
-
 	}
 
 	void setName(String _name) {
@@ -94,7 +82,6 @@ public class Agent implements Serializable{
 	List<Article> getExchangeList(){
 		return exchangeList;
 	}
-
 
 	int[] getPotentialAttributes_X() {
 		return potentialAttributes;
@@ -170,21 +157,6 @@ public class Agent implements Serializable{
 		exUpper.add(a);
 		contexts.get(fav).addHash(a.getHashID());
 		//contexts.get(fav).deduplication();//新造なので重複排除は必要なし
-
-	}
-
-
-
-    //contextによらず優先されるべきメッセージが存在するとして、その過程をシミュレーションするためのもの
-	//緊急配信みたいなものを手動で拡散するものと考えていい
-	void addSpecial(Article a) {
-		articleList.add(a);		
-		exUpper.add(a);		
-	}
-
-	void articleGenSimtime() {
-		//シミュレーションの時間軸に沿った記事の生成
-		//せ
 	}
 
 	void showArticle() {
@@ -215,18 +187,6 @@ public class Agent implements Serializable{
 		}
 		System.out.print("},\n");
 	}
-	
-	void showHashesCSV(){
-		//余裕があればjson形式で吐く いまではない
-		System.out.print("\"attr\" : {");
-		System.out.println("■□□□■□□□■□□□■□□□■□□□■□□□" );
-		for(Context c : contexts) {
-			System.out.print( c.getAttribute() + ", ");
-			System.out.println("□□□□□□□□" );
-			c.showHashes();
-		}
-		System.out.print("},\n");
-	}
 
 
 
@@ -248,9 +208,7 @@ public class Agent implements Serializable{
 		}
 	}		
 
-	void downLoad_simple(List<Article> downLoads){
-		articleList.addAll(downLoads);
-	}
+
 
 	void downLoad(List<Article> downLoads){
 		for (Article s : downLoads) {
@@ -328,16 +286,16 @@ public class Agent implements Serializable{
 				for (Context c : contexts) {
 					if (Math.abs( c.getAttribute()- art.getPotentialAttribute() ) < 5){
 						switch(Preference.t4LogMode) {
-							case "name-only" :
-								//交換があったとき、一度だけ2者の名前を表示
-								if(!isExchanged) {
-									System.out.println(simtime + " " + donner.getName()+"-"+name);
-								}
+						case "name-only" :
+							//交換があったとき、一度だけ2者の名前を表示
+							if(!isExchanged) {
+								System.out.println(simtime + " " + donner.getName()+"-"+name);
+							}
 							break;
-							case "none" :
+						case "none" :
 							break;
-							
-							default :
+
+						default :
 							break;		
 						}
 						c.addHash(art.getHashID());
@@ -354,7 +312,44 @@ public class Agent implements Serializable{
 		}
 	}
 
-	void giveArticlefromContext(Agent recepient, Context externalContext,int simtime) {
+
+	List<Article> serveContext( Context inflowContext,int simtime) {
+		//1.相手からContextをもらう
+		//2.手持ちのContextから、もっともJaccard係数が高いものを選ぶ
+		//ContextのCacheの上位5件を与える
+		Jaccard jacc = new Jaccard();
+		double topScore = 0;
+		Context topContext = new Context(); 
+		List<Article> arts = new ArrayList<Article>();
+		for(Context ownContext : contexts) {
+			double score = jacc.apply(ownContext.getHashes(), inflowContext.getHashes());
+			if (score > 0.4 ) {
+				System.out.print("☺");
+				if(score > topScore) {
+					topScore = score;
+					topContext = ownContext;
+				}
+			}
+		}
+		if(topScore == 0) {
+			return arts;
+		}
+
+		int amountOfCache = topContext.caches.size();
+		if (amountOfCache > 5) {
+			arts = topContext.caches.subList(topContext.caches.size()-5,topContext.caches.size()-1);
+		}else {
+			arts = topContext.caches;
+		}
+		return arts;
+		//受け皮ではContext.recivecacheを使ってね
+	}
+
+
+
+	void giveArticlefromContext(Context externalContext,int simtime) {
+		//202007 もうつかわん
+		
 		//1.相手からContextをもらう
 		//2.手持ちのArticleから、もっともJaccard係数が高いものを選ぶ
 		//類似度の閾値を決めて、閾値が一定以上のものでもよいかもしれない
@@ -364,19 +359,20 @@ public class Agent implements Serializable{
 
 		Jaccard jacc = new Jaccard();
 		for(Context myContext : contexts) {
-			if ( jacc.apply(myContext.getHashes(), externalContext.getHashes()) > 0.4 ) {
+			if (jacc.apply(myContext.getHashes(), externalContext.getHashes()) > 0.4 ) {
 				System.out.print(simtime + " " +name);
 				System.out.println(" ☆");
 				//contextのcacheを上書きします
 				for(Article a : myContext.caches) {
 					a.WriteTransportTime(simtime);
 				}
-				
+
 				//ここで、hashesの類似度が高いものをcashに追加する？
 				//contexのキャッシュ上位5件を私ます。
 				//これは、交換後に別な関数うとして行うのがいいい
-				//今回はCashもHashにたされます				
-				
+				//今回はCashもHashにたされます	
+				//ここでキャッシュのフィルタリングを行います。こっちのcacheにあるものはよまない。
+
 				int amountOfCache = myContext.caches.size();
 				if (amountOfCache < 5) {
 					for(Article a : myContext.caches) {
@@ -408,31 +404,27 @@ public class Agent implements Serializable{
 				}
 				//hashが規定のサイズを越えた場合は消します
 				while(externalContext.hashes.size() > Preference.contextSize) {
-					System.out.print("💢");
 					externalContext.hashes.remove();
 				}
-				
-				
-				
+
 			}else{
 				//System.out.print("☠");
 			}
 		}
 	}
 
-
 	void showCaches(Context context) {
 		for(Context c : contexts) {
 			c.showCaches();
 		}
 	}
-	
+
 	void showCSV() {
 		for(Context c : contexts) {
-			c.showCacheCSV();			
+			//c.showCacheCSV();			
 		}
 	}
-	
+
 	String getCSV() {
 		String csv ="";
 		for(Context c : contexts) {
@@ -441,21 +433,7 @@ public class Agent implements Serializable{
 		}
 		return csv;
 	}
-	
-	
 
-	
-
-
-
-
-	int exListSize() {
-		return exchangeList.size();
-	}
-
-	int mSize() {
-		return exMiddle.size();
-	}
 
 	void uniteList(int num, List<Article> articleList) {
 		if (articleList.size() <= num ){
@@ -480,7 +458,6 @@ public class Agent implements Serializable{
 		}
 	}
 
-
 	void makeExchangeListLayers() {
 		//層ごとにexchangeListを再構成する
 		//ほかのきっかけでexUpper、exMiddle,Exlowerなどに新作ができてるはずである。
@@ -495,10 +472,14 @@ public class Agent implements Serializable{
 		//2.手持ちの嗜好より1.attributeに準じたarticleを選択
 	}
 
-
 	void shrinkContextDomain() {
 		//類似度の高いコンテクストを結合する
 		//先端部に古いほうのコンテクスト、中心部に共起度が高いコンテクスト、終端部に新しい方のコンテクスト
 		//自動生成後に行う
+	}
+
+	void addSpecial(Article a) {
+		articleList.add(a);		
+		exUpper.add(a);		
 	}
 }

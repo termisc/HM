@@ -25,6 +25,7 @@ public class ExV5Hystory {
 	//読むファイル変えたくなったらpreferencesでファイル名かえてね
 	//ContextCSVFileNameを読む
 	//ContextCSVのうち、trackListに符号するものを出力。articleTraceLogに保存。
+	//メモ：ログにに出てるのはHashでcacheではない。
 	
 	private static ArrayList<String> SearchingArticleList;
 
@@ -91,7 +92,7 @@ public class ExV5Hystory {
 				for(String f : factors) {
 					for (String h : SearchingArticleList) {
 						if (f.equals(h)) {
-							//System.out.println(factors[0]+","+factors[1]+","+h);
+							System.out.println(factors[0]+","+factors[1]+","+h);
 							mainLogBuf.append(factors[0] + "," + factors[1] + "," + h +"\n"); 
 						}
 					}

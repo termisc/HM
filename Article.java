@@ -7,7 +7,10 @@ import java.io.Serializable;
 public class Article implements Serializable{
 	private int number;
 	private int createdTime;
-	private int transportTime;
+	private int lastTransportTime;//最終交換時刻。今はつかわない。
+	private int transportCount;
+	//交換回数。交換回数が多い記事は交換候補から避けたほうよい・
+	//反面、交換回数が多い記事をhash listにおいておけばcontextの共通性が高まるだろう。いわば殿堂いり。
 	private String hashID;
 	private String author;
 	private String transporter;
@@ -94,10 +97,9 @@ public class Article implements Serializable{
 		hashList.forEach(s -> {
             System.out.println(s);
         });
-	}
-	
-	void WriteTransportTime(int _transportTime) {
-		transportTime = _transportTime;
+	}	
+	void WriteTransportTime(int _simtime) {
+		lastTransportTime = _simtime;
 	}
 	
 	void WriteTransporter(String _transporter) {

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
+
 public class Context  implements Serializable{
 	
 	// 似たようなトピックをもったハッシュの集合体だと考えてよい。
@@ -18,28 +19,33 @@ public class Context  implements Serializable{
 	//Contextsは渡す記事に貼り付けられている
 	//記事とは別に自由に使えるかたちで存在する。
 	int attribute;
-	
-	LinkedList<String> hashes;
-	//キリがないのでQueue,10こまで. たまったらSynonimsをもとに再構成する
-	
-	ArrayList<ArrayList> synonims;  //ArrayList<String> を保持してね。
-	
-	
+	LinkedList<String> hashes; //相手に渡すハッシュ集合
 	LinkedList<Article> caches; // Article recommended by context.
+	
+	//キリがないのでQueue,10こまで. たまったらSynonimsをもとに再構成する
+	//ArrayList<ArrayList> synonims; 
+	//Cacheに実態のあるArticleのHashからcontextのhashesを再構築する。//なくてもいいかも
+	
+	public class hashData{
+		String hash;
+		int score;
+	}
+	
+	LinkedList<hashData> domains;//ハッシュ集合。相手に渡さなず、ハッシュに関するデータを保持している。ハッシュごとのスコアなど。このデータをもとにhashes やcachesを構成（したい）
+	
 	
 	
 	Context(){
 	  hashes = new  LinkedList<String>();
-	  synonims = new ArrayList<ArrayList>();
 	  caches = new LinkedList<Article>();
+	  domains = new LinkedList<hashData>();	  
 	}
 	
 	Context(int _attribute){
 		  hashes = new  LinkedList<String>();
-		  synonims = new ArrayList<ArrayList>();
 		  caches = new LinkedList<Article>();
+		  domains = new LinkedList<hashData>();
 		  attribute = _attribute;
-		  
 	}
 	
 	Integer getAttribute() {
@@ -50,9 +56,49 @@ public class Context  implements Serializable{
 		return hashes;
 	}
 	
-	//重複を回避しよう
-	void addHash(String hash){
-		hashes.add(hash);
+	void addHash(String _hash){
+		for(String s: hashes) {
+			if(_hash.equals(s)) {
+				return;
+			}
+		}
+		hashes.add(_hash);
+	}
+	
+	void addHashData(String _hash){
+		for(hashData d: domains) {
+			if(_hash.equals(d)) {
+				return;
+			}
+		}
+		hashData d = new hashData();
+		d.hash = _hash;
+		d.score = 0;
+		domains.add(d);
+	}
+	
+	void addCache(Article _cache) {
+		for(Article c: caches) {
+			if(_cache.getHashID().equals(c.getHashID())) {
+				return;
+			}
+		}
+		caches.add(_cache);
+	}
+	
+	void recieveCache(List<Article> arts) {
+		for(Article a : arts) {
+			addCache(a);
+		}
+		caches.addAll(arts);
+	}
+	
+	void recieveContext(List<Article> arts) {
+		//recievecache と recievecontextは統合してもいいかも(いまのところ運用がかわらん)
+		for(Article a : arts) {
+			  addHash(a.getHashID());
+			  //addHashに重複回避あります
+		}
 	}
 	
 	void setHashes(LinkedList<String> _hashes){
@@ -75,14 +121,6 @@ public class Context  implements Serializable{
         });
 	}
 	
-	void showCacheCSV(){
-		hashes.forEach(c -> {
-            System.out.print(c);
-            System.out.print(",");
-        });
-	}
-	
-	
 	String getHashesForLog(){
 		String log = "";
 		for (String s : hashes) {
@@ -90,19 +128,18 @@ public class Context  implements Serializable{
 		}		
 		return log;
 	}
-	
-	void addSynonims(ArrayList<String> _hashes) {
-		synonims.add(_hashes);
-	}
+		
 	
 	void reconstruct() {
-		//Synonimを参考にして再構成するよ
+		//hashDataを参考にしてcache,hashes再構成するよ
 		//1.重複回数が多いものを優先(基底)
 		//2.新しいものを優先
 		//3.(どうする？作成頻度にもとづいてバラけるように配置したい)
 	}
+		
 	
 	void deduplication() {
+		//シミュレーションにエラーなければ使わなくていい(はず。)
 		for(int i = 0; i < hashes.size(); i++) {
 			for(int j = 0; j < hashes.size(); j++) {
 				if ( i != j && hashes.get(i).equals(hashes.get(j)) ){
@@ -113,6 +150,7 @@ public class Context  implements Serializable{
 	}
 	
 	void cacheDeduplication() {
+		//シミュレーションにエラーなければ使わなくていい(はず。)
 		for(int i = 0; i < caches.size(); i++) {
 			for(int j = 0; j < caches.size(); j++) {
 				if ( i != j && caches.get(i).getHashID().equals(caches.get(j).getHashID()) ){
@@ -124,23 +162,28 @@ public class Context  implements Serializable{
 	
 	LinkedList<Article> cacheSizeEqualize() {
 		if (caches.size() > Preference.cacheSize ) {
-			List<Article> sub = caches.subList(caches.size()-Preference.cacheSize,caches.size()-1);
+			//サイズ超過分、先頭から削除したリストを作成し上書き。
+			List<Article> sub = caches.subList(caches.size()-Preference.cacheSize, caches.size()-1);
 			//ArrayList<Article> cache = sub.newArrayList(sub);
 			caches = new LinkedList<Article>(sub);
-			System.out.println("EQORIZED");
-			//System.exit(0);
-		
+			System.out.println("E");
+			//System.exit(0);		
 		}
-		
-		
+		return caches;
+	}
+	
+	LinkedList<Article> hashSizeEqualize() {
+		if (hashes.size() > Preference.contextSize ) {
+			List<String> sub = hashes.subList(hashes.size()-Preference.contextSize, hashes.size()-1);
+			//ArrayList<Article> cache = sub.newArrayList(sub);
+			hashes = new LinkedList<String>(sub);
+			System.out.println("e");
+			//System.exit(0);		
+		}
 		return caches;
 	}
 
-	 void addCache(Article s) {
-		 caches.add(s);
-		// TODO Auto-generated method stub
-		
-	}
+	
 	
 
 }

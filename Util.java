@@ -195,13 +195,6 @@ public class Util {
 		}
 	}
 
-	void exChangeBidirectional(Agent a,Agent b,int simtime) {
-		//exChangeBidirectional
-		//あんまり意味ないのでけしましょう
-		a.download_T4(b,simtime);
-		b.download_T4(a,simtime);
-	}
-
 	int[] ramdomMatch(int maxnum) {
 		int[] couple = new int[2]; 
 		Random rand = new Random();
@@ -362,7 +355,7 @@ public class Util {
 
 		}
 		csv+="\n";
-		System.out.println(csv);
+		//System.out.println(csv);
 		File file = new File(Preference.ContextCSVFileName);
 		try {
 			FileWriter filewriter = new FileWriter(file, true);
@@ -385,12 +378,10 @@ public class Util {
 				int goal = Integer.parseInt(arg);
 				for(int i = 0 ; i < goal ; i++) {
 					int[] couple = ramdomMatch(25);
-					exChangeBidirectional(agents.get(couple[0]),agents.get(couple[1]),simtime);
+					agents.get(couple[0]).download_T4(agents.get(couple[1]),simtime);
+					agents.get(couple[1]).download_T4(agents.get(couple[0]),simtime);
 					simtime ++;
 				}
-				int[] couple = ramdomMatch(25);
-				exChangeBidirectional(agents.get(couple[0]),agents.get(couple[1]),simtime);
-				simtime ++;
 			}
 		}
 		return simtime;
@@ -405,11 +396,13 @@ public class Util {
 				int goal = Integer.parseInt(arg);
 				for(int i = 0 ; i < goal ; i++) {
 					int[] couple = ramdomMatch(25);
-					exChangeBidirectional(agents.get(couple[0]),agents.get(couple[1]),simtime);
+					agents.get(couple[0]).download_T4(agents.get(couple[1]),simtime);
+					agents.get(couple[1]).download_T4(agents.get(couple[0]),simtime);
 					simtime ++;
 				}
 				int[] couple = ramdomMatch(25);
-				exChangeBidirectional(agents.get(couple[0]),agents.get(couple[1]),simtime);
+				agents.get(couple[0]).download_T4(agents.get(couple[1]),simtime);
+				agents.get(couple[1]).download_T4(agents.get(couple[0]),simtime);
 				System.out.println("OK");
 				simtime ++;
 			}else {
@@ -448,7 +441,7 @@ public class Util {
 					Agent recipient = agents.get(couple[0]);
 					Agent donner = agents.get(couple[1]);
 					Context c = donner.getContexts().get(contextNum);
-					recipient.giveArticlefromContext(donner,c,simtime);
+					recipient.giveArticlefromContext(c,simtime);
 				}
 				catch(IndexOutOfBoundsException exception) {
 					System.out.println("indexerror");
@@ -483,8 +476,8 @@ public class Util {
 		try {
 			Agent recipient = agents.get(agent1);
 			Agent donner = agents.get(agent2);
-			Context c = donner.getContexts().get(contextNum);
-			recipient.giveArticlefromContext(donner,c,simtime);
+			Context c = recipient.getContexts().get(contextNum);
+			donner.giveArticlefromContext(c,simtime);
 		}
 		catch(IndexOutOfBoundsException exception) {
 			//handleTheExceptionSomehow(exception);
@@ -539,7 +532,8 @@ public class Util {
 			}
 		}
 		if(error_flag == false && obj2_flag == true) {
-			exChangeBidirectional(agents.get(agent1),agents.get(agent2),simtime);
+			agents.get(agent1).download_T4(agents.get(agent2),simtime);
+			agents.get(agent2).download_T4(agents.get(agent1),simtime);
 		}		
 	}
 

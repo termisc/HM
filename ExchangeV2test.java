@@ -88,15 +88,16 @@ public class ExchangeV2test {
 
 		for (int i = 0 ; i < 100 ; i++) {
 			simtime ++;
-
 			for (Agent a : agents) {
 				a.articleGenFav(simtime);			
 				a.makeExchangeListLayers();
 			}
-			
-			//System.out.println("Round" + i);
 			int match = Math.abs(rand.nextInt()) % (Preference.agentNum - 1) + 1; //1~24	
-			util.exChangeBidirectional(agents.get(0), agents.get(match),simtime);
+			pair = util.ramdomMatch(Preference.agentNum);
+			Agent donner = agents.get(pair[0]);
+			Agent recipient = agents.get(pair[1]);
+			donner.download_T4(recipient,simtime);
+			recipient.download_T4(donner,simtime);
 		}
 						
 		try {
