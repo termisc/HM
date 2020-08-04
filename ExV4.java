@@ -90,6 +90,8 @@ public class ExV4 {
 				for(Article a:donner.serveContext(c,simtime)) {
 					c.addCache(a);
 					c.addHash(a.getHashID());
+					c.cacheSizeEqualize();
+					c.hashSizeEqualize();
 				}
 			}
 			//100simtimeに一回、genを行う。genするたびgencount +1.mod エージェント数でエージェント輪番で記事を生成する。]
@@ -107,6 +109,8 @@ public class ExV4 {
 			}
 			simtime ++;
 		}
+		
+		for(Agent x :agents ) {x.dumpEx();	System.out.println("");}
 
 		System.out.println("\nsimやりました。csvを確認してください。さようなら");
 		while(true) {
