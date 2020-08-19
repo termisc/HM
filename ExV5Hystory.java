@@ -30,7 +30,6 @@ public class ExV5Hystory {
 	private static ArrayList<String> SearchingArticleList;
 
 	public static void main(String[] args){
-		//25人のエージェントを読みます
 		
 		String contextLogFileName = Preference.ContextCSVFileName;
 		String trackListFileName = Preference.trackListFileName;

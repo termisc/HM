@@ -13,4 +13,5 @@ public class Preference {
 	public static String ContextCSVFileName = "contHyst.csv";
 	public static String articleTraceLogFileName = "articleTraceLog.csv";
 	public static String trackListFileName = "searchingArticle.csv";
+	public static String allArticleListName = "allArticle.csv";
 }

@@ -21,6 +21,7 @@ public class Context  implements Serializable{
 	int attribute;
 	LinkedList<String> hashes; //相手に渡すハッシュ集合
 	LinkedList<Article> caches; // Article recommended by context.
+	String name;
 	
 	//キリがないのでQueue,10こまで. たまったらSynonimsをもとに再構成する
 	//ArrayList<ArrayList> synonims; 
@@ -36,16 +37,30 @@ public class Context  implements Serializable{
 	
 	
 	Context(){
+	  name = "noname";
 	  hashes = new  LinkedList<String>();
 	  caches = new LinkedList<Article>();
 	  domains = new LinkedList<hashData>();	  
 	}
 	
 	Context(int _attribute){
+		  name = "noname";
 		  hashes = new  LinkedList<String>();
 		  caches = new LinkedList<Article>();
 		  domains = new LinkedList<hashData>();
 		  attribute = _attribute;
+	}
+	
+	Context(int _attribute,String _name){
+		  name = _name;
+		  hashes = new  LinkedList<String>();
+		  caches = new LinkedList<Article>();
+		  domains = new LinkedList<hashData>();
+		  attribute = _attribute;
+	}
+	
+	void setName(String _name) {
+		name = _name;
 	}
 	
 	Integer getAttribute() {

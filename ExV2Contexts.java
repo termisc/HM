@@ -1,6 +1,8 @@
 package hashContextTest;
 
 import java.io.BufferedReader;
+import java.util.List;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,6 +26,7 @@ public class ExV2Contexts {
 		Util util = new Util();		
 		int[] pair = util.ramdomMatch(2);
 		Misc misc = new Misc();
+		List <Article> articleLog = new ArrayList <Article>() ; 
 
 
 		int simtime = 0;
@@ -34,10 +37,11 @@ public class ExV2Contexts {
 		ArrayList<Agent> agents = new ArrayList<Agent>();
 		for (int i = 0 ; i < Preference.agentNum ; i++) {
 			simtime++;
-			agents.add(new Agent());
-			agents.get(i).setName(agentNames[i]);
+			agents.add(new Agent(agentNames[i]));
+			//agents.get(i).setName(agentNames[i]);
 			for (int j = 0; j < 30 ; j++) {
-				agents.get(i).articleGenSimple(simtime);
+				agents.get(i).articleGenLogged(simtime,articleLog);
+				
 				//これでランダムで雑な記事がたくさんできる
 			}
 			agents.get(i).makeaExchangeListSimple();
@@ -82,6 +86,7 @@ public class ExV2Contexts {
 			agents.get(i).getContexts().get(0).addHash(specialArticle.getHashID());
 			agents.get(i).addSpecial(specialArticle);
 			agents.get(i).makeExchangeListLayers();
+			articleLog.add(specialArticle);
 		}
 		
 		for(Agent x :agents ) {x.dumpEx();	System.out.println("");}
@@ -110,6 +115,13 @@ public class ExV2Contexts {
 			//util.exChangeBidirectional(agents.get(0), agents.get(match),simtime);
 		}
 
+		//書き込みテストです
+		agents.get(0).getArticleList().get(0).WriteDescription("ああああ");
+		agents.get(0).getArticleList().get(0).ShowArticleInfo();
+		System.out.println("ああああ");
+		//agents.get(0).getArticleList().get(0).WriteDescription("ああああ");
+		
+		//save Agents
 		try {
 			ObjectOutputStream objOutStream = 
 					new ObjectOutputStream(
@@ -125,8 +137,31 @@ public class ExV2Contexts {
 			e.printStackTrace();
 		}
 
-		System.out.println("エージェント保存したよ\n");
+		System.out.println("Agents保存したよ\n");
 		System.out.println("simttime:"+ simtime);
+		
+		
+		//Save Articles
+		try {
+			ObjectOutputStream objOutStream = 
+					new ObjectOutputStream(
+							new FileOutputStream("articles.bin"));
+			objOutStream.writeObject(articleLog);
+			objOutStream.close();
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("Article保存したよ\n");
+		System.out.println("simttime:"+ simtime);
+		
+		System.out.println("おしまし\n");
+		System.exit(0);
 		
 		System.out.println("☆☆☆☆☆☆");
 		for(Agent x :agents ) {x.dumpEx();	System.out.println("");}

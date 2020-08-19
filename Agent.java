@@ -49,7 +49,8 @@ public class Agent implements Serializable{
 
 	int POTENCIAL = Preference.favNum; //5です
 
-	Agent(){
+	Agent(String _name){
+		name = _name;
 		articleList =  new ArrayList<Article>();
 		exchangeList =  new ArrayList<Article>();
 		exUpper =  new ArrayList<Article>();
@@ -58,7 +59,11 @@ public class Agent implements Serializable{
 		potentialAttributes = new int[POTENCIAL];
 		contexts = new ArrayList<Context>();
 		Random rand = new Random();
-		for(int i = 0; i < POTENCIAL ; i++ ) { contexts.add(new Context(Math.abs(rand.nextInt() % Preference.topicNum ))); }
+		for(int i = 0; i < POTENCIAL ; i++ ) {
+			int attr = Math.abs(rand.nextInt() % Preference.topicNum );
+			String contextName = name +  "_" + String.valueOf(attr);
+			contexts.add(new Context(attr,contextName));
+			}
 		for(int i = 0; i < POTENCIAL ;i++) {
 			potentialAttributes[i] = Math.abs(rand.nextInt() % Preference.topicNum );
 		}
@@ -103,6 +108,21 @@ public class Agent implements Serializable{
 		articleList.add(A);		
 		exLower.add(A);
 	}
+	
+	void articleGenLogged(int simtime,List <Article> articleLog){
+		//ランダムで記事のATTRを作成
+		//ランダムでその記事のハッシュを作成
+		//交換リストに追加	
+		Random rand = new Random();
+		String p = RandomStringUtils.randomAlphabetic(16);
+		byte[] hashbyte = DigestUtils.md5(p);
+		String result = Base64.getUrlEncoder().encodeToString(hashbyte);
+		Article A = new Article(result,name,simtime,Math.abs(rand.nextInt() % Preference.topicNum ));
+		articleList.add(A);		
+		exLower.add(A);
+		articleLog.add(A);
+	}
+	
 
 	void articleGenFav(int simtime) {
 		Random rand = new Random();
@@ -220,6 +240,9 @@ public class Agent implements Serializable{
 			}
 			if (collision == false) {
 				articleList.add(s);
+				//本当は参照じゃなくてcloneするのがいいが。。
+				//(コピー先の変化にコピー元が影響をうけてしまうため)
+				//いまは必要ないので放置します
 			}
 		}	
 	}
@@ -341,10 +364,52 @@ public class Agent implements Serializable{
 		}else {
 			arts = topContext.caches;
 		}
+		
+		String to = name + String.valueOf(topContext.getAttribute());
+		
+		//( String _from, String _to ,int _timestump, String _coord, int _score) 
+		//ここですべてのartsにログを追加しよう
+		ArticleLog artlog = new ArticleLog(to,inflowContext.name,simtime,"",topScore); 
+		for(Article a : arts) {
+			a.addLog(artlog);
+		}
+		
 		return arts;
 		//受け皮ではContext.recivecacheを使ってね
 	}
 
+	
+	List<Article> serveContextLogged( Context inflowContext,int simtime,Agent from) {
+		//1.相手からContextをもらう
+		//2.手持ちのContextから、もっともJaccard係数が高いものを選ぶ
+		//ContextのCacheの上位5件を与える
+		Jaccard jacc = new Jaccard();
+		double topScore = 0;
+		Context topContext = new Context(); 
+		List<Article> arts = new ArrayList<Article>();
+		for(Context ownContext : contexts) {
+			double score = jacc.apply(ownContext.getHashes(), inflowContext.getHashes());
+			if (score > 0.4 ) {
+				System.out.print("☺");
+				if(score > topScore) {
+					topScore = score;
+					topContext = ownContext;
+				}
+			}
+		}
+		if(topScore == 0) {
+			return arts;
+		}
+
+		int amountOfCache = topContext.caches.size();
+		if (amountOfCache > 5) {
+			arts = topContext.caches.subList(topContext.caches.size()-5,topContext.caches.size()-1);
+		}else {
+			arts = topContext.caches;
+		}
+		return arts;
+		//受け皮ではContext.recivecacheを使ってね
+	}
 
 
 	void giveArticlefromContext(Context externalContext,int simtime) {
@@ -455,6 +520,12 @@ public class Agent implements Serializable{
 	void dumpEx() {
 		for(Article s : exchangeList) {
 			s.ShowArticleInfo();
+		}
+	}
+	
+	void dumpAllArticle() {
+		for(Article s : articleList) {
+			s.ShowArticleInfoCSV();
 		}
 	}
 

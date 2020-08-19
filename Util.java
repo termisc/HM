@@ -206,12 +206,29 @@ public class Util {
 		return couple;
 	}
 
-	void saveAgents(ArrayList<Agent> agents, String filename) {
+	static void saveAgents(ArrayList<Agent> agents, String filename) {
 		//よくつかうんので
 		try {
 			ObjectOutputStream objOutStream = 
 					new ObjectOutputStream(new FileOutputStream(filename));
 			objOutStream.writeObject(agents);
+			objOutStream.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("エージェント保存しましま");
+	}
+	
+	static void saveArticles(ArrayList<Article> articles, String filename) {
+		//よくつかうんので
+		try {
+			ObjectOutputStream objOutStream = 
+					new ObjectOutputStream(new FileOutputStream(filename));
+			objOutStream.writeObject(articles);
 			objOutStream.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -568,6 +585,21 @@ public class Util {
 			a.makeExchangeListLayers();	
 		}
 		return 0;
+	}
+	
+	void initUniqueArticleList() {
+		
+	}
+	
+	void addUniqueArticleList() {
+		
+	}
+	
+	//writedownを一行ごとやるか、まとめてやるかの違いあるかと思う。
+	//今回は一行ごとにやります。
+	
+	void writeDownArticleList() {
+		
 	}
 	
 

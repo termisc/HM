@@ -86,8 +86,9 @@ public class ExV4 {
 			//ルール ・　request する Agent がもつ　(ひとつの / すべての) Contextにつき 照会を行う
 			Agent donner = agents.get(pair[0]);
 			Agent recipient = agents.get(pair[1]);
+			ArticleLog articleLog = new ArticleLog(donner.getName(),recipient.getName(),simtime,"",0);
 			for(Context c : recipient.getContexts()) {
-				for(Article a:donner.serveContext(c,simtime)) {
+				for(Article a: donner.serveContext(c,simtime)) {
 					c.addCache(a);
 					c.addHash(a.getHashID());
 					c.cacheSizeEqualize();
@@ -113,6 +114,9 @@ public class ExV4 {
 		for(Agent x :agents ) {x.dumpEx();	System.out.println("");}
 
 		System.out.println("\nsimやりました。csvを確認してください。さようなら");
+		Util.saveAgents(agents,"agents.bin");
+		//Util.saveArticles(articles,"articles.bin");
+		
 		while(true) {
 			try{
 				//入力ストリームの生成
